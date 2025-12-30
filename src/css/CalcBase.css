@@ -1,0 +1,100 @@
+.calc-wrap {
+  padding: 32px 24px;
+  background: radial-gradient(1200px 600px at 20% -200px, #1a3358 0%, transparent 60%),
+              radial-gradient(1200px 600px at 100% 0px, #0f233f 0%, transparent 60%),
+              #0b1424;
+  min-height: calc(100vh - 64px);
+  color: #e6f0ff;
+}
+
+.calc-hero {
+  max-width: 980px;
+  margin: 0 auto 24px;
+  text-align: center;
+}
+.calc-hero h1 {
+  font-size: 34px;
+  line-height: 1.2;
+  margin: 0 0 8px;
+  letter-spacing: 0.2px;
+}
+.calc-hero .muted { color: #bfd3ff; opacity: 0.9; }
+
+.calc-grid {
+  max-width: 1100px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 18px;
+}
+@media (max-width: 960px) { .calc-grid { grid-template-columns: 1fr; } }
+
+.card {
+  background: rgba(18, 28, 48, 0.75);
+  border: 1px solid rgba(88, 122, 199, 0.25);
+  box-shadow: 0 10px 30px rgba(0,0,0,0.35), inset 0 1px 0 rgba(255,255,255,0.04);
+  border-radius: 18px;
+  padding: 18px;
+  backdrop-filter: blur(4px);
+}
+.card-title { font-size: 18px; margin: 0 0 12px; color: #d7e6ff; }
+
+.row { display: grid; grid-template-columns: 1fr; gap: 12px; margin-bottom: 12px; }
+.row.two { grid-template-columns: 1fr 1fr; }
+@media (max-width: 640px) { .row.two { grid-template-columns: 1fr; } }
+
+.field label {
+  display: block; font-size: 12px; color: #b7c9f5; margin-bottom: 6px;
+}
+.field input,
+.field select {
+  width: 100%;
+  background: #0f1b31;
+  color: #e7f0ff;
+  border: 1px solid rgba(102, 140, 220, 0.35);
+  border-radius: 12px;
+  padding: 12px;
+  outline: none;
+  transition: box-shadow .2s, border-color .2s;
+}
+.field input:focus,
+.field select:focus {
+  border-color: #5cb8ff;
+  box-shadow: 0 0 0 3px rgba(92, 184, 255, 0.25);
+}
+
+.kpi-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 10px; }
+.kpi {
+  background: #0f1a2c; border: 1px solid rgba(98,150,255,.25);
+  border-radius: 14px; padding: 14px;
+}
+.kpi-label { color: #9fb6ff; font-size: 12px; }
+.kpi-value { font-size: 22px; font-weight: 700; margin: 6px 0; }
+.kpi-sub   { color: #8aa2d7; font-size: 12px; }
+
+/* Small components used by BMI page */
+.scale {
+  height: 10px; border-radius: 999px; overflow: hidden; display: grid; grid-template-columns: 18.5 6.4 5 5 100fr;
+  background: #0f1930; border: 1px solid rgba(120,160,255,.25); margin: 10px 0 6px;
+}
+.scale > span:nth-child(1){background:#1e90ff66;}    /* underweight */
+.scale > span:nth-child(2){background:#1cd65f66;}    /* normal */
+.scale > span:nth-child(3){background:#ffc44d66;}    /* overweight */
+.scale > span:nth-child(4){background:#ff7a7a66;}    /* obesity I */
+.scale > span:nth-child(5){background:#b341ff33;}    /* obesity II+ */
+
+.pin {
+  position: relative; height: 0; margin-top: -3px;
+}
+.pin::after {
+  content:""; position:absolute; top:-6px; width:0; height:0;
+  border-left:6px solid transparent; border-right:6px solid transparent; border-bottom:10px solid #e6f0ff;
+  transform: translateX(-50%);
+}
+.small { color:#a8c3ff; font-size:12px; }
+.table {
+  width:100%; border-collapse: collapse; margin-top: 12px; font-size: 14px;
+  background: #0f1a2c; border: 1px solid rgba(98,150,255,.25); border-radius: 12px; overflow: hidden;
+}
+.table th, .table td { padding: 10px 12px; border-top: 1px solid rgba(98,150,255,.15); }
+.table th { text-align:left; color:#cfe0ff; background:#0e1628; }

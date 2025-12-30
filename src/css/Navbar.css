@@ -1,31 +1,175 @@
+/* ====== Design tokens ====== */
+:root {
+  --bg: #0b1020;
+  --bg-hero: radial-gradient(1200px 600px at 10% -20%, #1d2b64 0%, transparent 60%),
+             radial-gradient(900px 500px at 110% 10%, #f8cdda 0%, transparent 55%);
+  --surface: rgba(255, 255, 255, 0.06);
+  --surface-strong: rgba(255, 255, 255, 0.12);
+  --text: #eaf0ff;
+  --muted: #a7b2c3;
+  --brand: #4fe3c1;
+  --brand-2: #7aa2ff;
+  --shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+  --radius: 14px;
+  --radius-sm: 10px;
+  --blur: 12px;
+  --speed: 220ms;
+}
+
+/* Prefer dark scheme if user opted in */
+@media (prefers-color-scheme: light) {
+  :root {
+    --bg: #0e1330;
+    --text: #f5f7ff;
+  }
+}
+
+/* ====== Navbar ====== */
 .navbar {
-  background-color: #003366;
+  position: sticky;
+  top: 0;
+  z-index: 50;
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  padding: 15px 50px;
+  justify-content: space-between;
+  padding: 14px 28px;
+  margin: 10px auto;
+  max-width: 1200px;
+
+  /* glass + subtle gradient border */
+  background: linear-gradient(180deg, rgba(255,255,255,0.08), rgba(255,255,255,0.04)) , var(--surface);
+  backdrop-filter: blur(var(--blur));
+  border: 1px solid rgba(255,255,255,0.14);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
 }
 
+/* Brand */
 .navbar-logo a {
-  color: #00cc66;
-  font-size: 24px;
-  font-weight: bold;
+  color: var(--brand);
+  font-size: 22px;
+  font-weight: 800;
   text-decoration: none;
+  letter-spacing: 0.4px;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  transition: transform var(--speed) ease;
 }
 
+.navbar-logo a::before {
+  content: "";
+  width: 10px;
+  height: 10px;
+  background: radial-gradient(circle at 30% 30%, var(--brand), var(--brand-2));
+  border-radius: 50%;
+  box-shadow: 0 0 18px var(--brand);
+}
+.navbar-logo a:hover { transform: translateY(-1px) scale(1.02); }
+
+/* Links */
 .navbar-links {
   list-style: none;
   display: flex;
-  gap: 25px;
+  align-items: center;
+  gap: 24px;
+  margin: 0;
+  padding: 0;
 }
 
 .navbar-links a {
-  color: white;
+  position: relative;
+  color: var(--text);
   text-decoration: none;
-  font-size: 16px;
-  font-weight: 500;
+  font-size: 15px;
+  font-weight: 600;
+  letter-spacing: 0.2px;
+  opacity: 0.92;
+  transition: opacity var(--speed) ease;
+}
+
+/* underline hover */
+.navbar-links a::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: -6px;
+  width: 0%;
+  height: 2px;
+  border-radius: 2px;
+  background: linear-gradient(90deg, var(--brand), var(--brand-2));
+  transition: width var(--speed) ease;
 }
 
 .navbar-links a:hover {
-  color: #00cc66;
+  opacity: 1;
+}
+.navbar-links a:hover::after {
+  width: 100%;
+}
+
+/* ====== Mobile ====== */
+.navbar-toggle {
+  display: none;
+  width: 42px;
+  height: 38px;
+  border-radius: var(--radius-sm);
+  border: 1px solid rgba(255,255,255,0.14);
+  background: var(--surface-strong);
+  color: var(--text);
+  cursor: pointer;
+  place-items: center;
+  transition: background var(--speed) ease, transform var(--speed) ease;
+}
+.navbar-toggle:active { transform: scale(0.98); }
+
+/* optional icon bars */
+.navbar-toggle .bar {
+  width: 20px;
+  height: 2px;
+  border-radius: 2px;
+  background: var(--text);
+  margin: 3px 0;
+  opacity: 0.9;
+}
+
+/* collapse layout */
+@media (max-width: 860px) {
+  .navbar { padding: 12px 16px; }
+  .navbar-toggle { display: grid; }
+
+  .navbar-links {
+    position: absolute;
+    right: 12px;
+    top: 68px;
+    flex-direction: column;
+    gap: 14px;
+    padding: 14px;
+    width: min(90vw, 280px);
+    background: var(--surface);
+    border: 1px solid rgba(255,255,255,0.12);
+    border-radius: var(--radius);
+    backdrop-filter: blur(var(--blur));
+    box-shadow: var(--shadow);
+    transform-origin: top right;
+    transform: scale(0.98);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity var(--speed) ease, transform var(--speed) ease;
+  }
+
+  /* Add a class .open on click via JS */
+  .navbar-links.open {
+    opacity: 1;
+    transform: scale(1);
+    pointer-events: auto;
+  }
+}
+
+/* Page background (apply on <body>) */
+body {
+  background: var(--bg), var(--bg-hero), var(--bg);
+  background-color: var(--bg);
+  color: var(--text);
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, Inter, "Helvetica Neue", Arial, "Noto Sans", "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
 }

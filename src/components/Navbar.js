@@ -3,10 +3,15 @@ import { Link } from 'react-router-dom';
 import '../css/Navbar.css';  
 
 function Navbar() {
+  // example: add this near your Navbar component
+document.querySelector('.navbar-toggle')?.addEventListener('click', () => {
+  document.querySelector('.navbar-links')?.classList.toggle('open');
+});
+
   return (
     <nav className="navbar">
       <div className="navbar-logo">
-        <Link to="/">Calculator.net</Link>
+        <Link to="/">Smart Calulators</Link>
       </div>
       <ul className="navbar-links">
         <li><Link to="/">FINANCIAL</Link></li>
