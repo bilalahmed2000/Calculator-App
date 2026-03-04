@@ -119,8 +119,8 @@ function ResultBar({ title, right }) {
   return (
     <div
       style={{
-        background: "rgba(120,255,140,0.18)",
-        border: "1px solid rgba(120,255,140,0.25)",
+        background: "rgba(16, 185, 129, 0.10)",
+        border: "1px solid rgba(16, 185, 129, 0.30)",
         borderRadius: 12,
         padding: "10px 12px",
         fontWeight: 900,
@@ -128,7 +128,7 @@ function ResultBar({ title, right }) {
         display: "flex",
         justifyContent: "space-between",
         alignItems: "center",
-        color: "rgba(255,255,255,0.92)",
+        color: "#065f46",
       }}
     >
       <span>{title}</span>
@@ -287,7 +287,7 @@ export default function AmortizationCalculator() {
       <section className="card" style={{ marginBottom: 18 }}>
         <div className="calc-grid" style={{ marginTop: 0 }}>
           {/* Inputs */}
-          <div className="card" style={{ background: "rgba(255,255,255,0.04)" }}>
+          <div className="card" style={{ background: "#f8f9ff" }}>
             <ResultBar title="Modify the values and click the Calculate button to use" right="" />
 
             <div className="row">
@@ -343,7 +343,7 @@ export default function AmortizationCalculator() {
                     margin: 0,
                     cursor: "pointer",
                     fontWeight: 900,
-                    color: "rgba(255,255,255,0.9)",
+                    color: "#1e1b4b",
                   }}
                 >
                   Optional: make extra payments

@@ -24,6 +24,14 @@ import PaymentCalculator from './pages/PaymentCalculator';
 import RetirementCalculator from './pages/RetirementCalculator';
 import AmortizationCalculator from './pages/AmortizationCalculator';
 import InvestmentCalculator from './pages/InvestmentCalculator';
+import InflationCalculator from './pages/InflationCalculator';
+import IncomeTaxCalculator from './pages/IncomeTaxCalculator';
+import ScientificCalculator from './pages/ScientificCalculator';
+import FractionCalculator from './pages/FractionCalculator';
+import PercentageCalculator from './pages/PercentageCalculator';
+import RandomNumberGenerator from './pages/RandomNumberGenerator';
+import TriangleCalculator from './pages/TriangleCalculator';
+
 
 
 function App() {
@@ -53,7 +61,13 @@ function App() {
           <Route path="/retirement" element={<RetirementCalculator />} /> 
           <Route path="/amortization" element={<AmortizationCalculator />} />
           <Route path="/investment" element={<InvestmentCalculator />} />
-
+          <Route path="/inflation" element={<InflationCalculator />} />
+          <Route path="/income-tax" element={<IncomeTaxCalculator />} />
+          <Route path="/scientific" element={<ScientificCalculator />} />
+          <Route path="/fraction-calculator" element={<FractionCalculator />} />
+          <Route path="/percentage-calculator" element={<PercentageCalculator />} />
+          <Route path="/random-number-generator" element={<RandomNumberGenerator />} />
+          <Route path="/triangle-calculator" element={<TriangleCalculator />} />
 
 
 

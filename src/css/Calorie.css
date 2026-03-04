@@ -1,26 +1,35 @@
+/* ============================================================
+   Calorie.css — Light theme (page-specific overrides)
+   ============================================================ */
+
 .calorie-wrap {
-  padding: 32px 24px;
-  background: radial-gradient(1200px 600px at 20% -200px, #1a3358 0%, transparent 60%),
-              radial-gradient(1200px 600px at 100% 0px, #0f233f 0%, transparent 60%),
-              #0b1424;
+  padding: 44px 24px 80px;
+  background:
+    radial-gradient(900px 500px at 10% -80px, rgba(99, 102, 241, 0.06) 0%, transparent 60%),
+    radial-gradient(800px 500px at 90%   0px, rgba(139, 92, 246, 0.05) 0%, transparent 60%),
+    #f4f6ff;
   min-height: calc(100vh - 64px);
-  color: #e6f0ff;
+  color: #1e1b4b;
 }
 
 .calorie-hero {
-  max-width: 980px;
-  margin: 0 auto 24px;
+  max-width: 720px;
+  margin: 0 auto 32px;
   text-align: center;
 }
 .calorie-hero h1 {
-  font-size: 34px;
+  font-size: clamp(26px, 4vw, 36px);
+  font-weight: 800;
   line-height: 1.2;
-  margin: 0 0 8px;
-  letter-spacing: 0.2px;
+  margin: 0 0 10px;
+  background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
 }
 .calorie-hero .muted {
-  color: #bfd3ff;
-  opacity: 0.9;
+  color: #6b7a9e;
+  opacity: 1;
 }
 
 .calorie-grid {
@@ -28,62 +37,49 @@
   margin: 0 auto;
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 18px;
+  gap: 20px;
 }
-@media (max-width: 960px) {
-  .calorie-grid { grid-template-columns: 1fr; }
-}
+@media (max-width: 960px) { .calorie-grid { grid-template-columns: 1fr; } }
 
-.card {
-  background: rgba(18, 28, 48, 0.75);
-  border: 1px solid rgba(88, 122, 199, 0.25);
-  box-shadow: 0 10px 30px rgba(0,0,0,0.35), inset 0 1px 0 rgba(255,255,255,0.04);
+/* Card — scoped to calorie page so it doesn't clash with CalcBase */
+.calorie-wrap .card {
+  background: #ffffff;
+  border: 1px solid rgba(99, 102, 241, 0.12);
+  box-shadow: 0 2px 12px rgba(79, 70, 229, 0.07), 0 1px 3px rgba(79, 70, 229, 0.05);
   border-radius: 18px;
-  padding: 18px;
-  backdrop-filter: blur(4px);
+  padding: 22px;
 }
-.card-title {
-  font-size: 18px;
-  margin: 0 0 12px;
-  color: #d7e6ff;
+.calorie-wrap .card-title {
+  font-size: 17px;
+  font-weight: 700;
+  margin: 0 0 16px;
+  color: #312e81;
 }
 
-.row { display: grid; grid-template-columns: 1fr; gap: 12px; margin-bottom: 12px; }
-.row.two { grid-template-columns: 1fr 1fr; }
-@media (max-width: 640px) { .row.two { grid-template-columns: 1fr; } }
-
-.field label {
+.calorie-wrap .field label {
   display: block;
-  font-size: 12px;
-  color: #b7c9f5;
-  margin-bottom: 6px;
+  font-size: 11.5px;
+  font-weight: 700;
+  color: #6b7a9e;
+  margin-bottom: 7px;
+  letter-spacing: 0.4px;
+  text-transform: uppercase;
 }
-.field input,
-.field select {
-  width: 100%;
-  background: #0f1b31;
-  color: #e7f0ff;
-  border: 1px solid rgba(102, 140, 220, 0.35);
+.calorie-wrap .field input,
+.calorie-wrap .field select {
+  background: #f8f9ff;
+  color: #1e1b4b;
+  border: 1.5px solid rgba(99, 102, 241, 0.2);
   border-radius: 12px;
-  padding: 12px 12px;
-  outline: none;
-  transition: box-shadow .2s, border-color .2s;
 }
-.field input:focus,
-.field select:focus {
-  border-color: #5cb8ff;
-  box-shadow: 0 0 0 3px rgba(92, 184, 255, 0.25);
+.calorie-wrap .field input:focus,
+.calorie-wrap .field select:focus {
+  border-color: #6366f1;
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.15);
+  background: #ffffff;
 }
 
-.facts {
-  display: flex;
-  gap: 18px;
-  margin-top: 6px;
-  color: #a8c3ff;
-  font-size: 13px;
-}
-.facts .hint { color: #8fb2ff; }
-
+/* KPI */
 .results .kpi-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -91,40 +87,69 @@
   margin-bottom: 12px;
 }
 .kpi {
-  background: #0f1a2c;
-  border: 1px solid rgba(98, 150, 255, 0.25);
+  background: #f5f3ff;
+  border: 1px solid rgba(99, 102, 241, 0.14);
   border-radius: 14px;
-  padding: 14px;
+  padding: 16px;
 }
-.kpi-label { color: #9fb6ff; font-size: 12px; }
-.kpi-value { font-size: 22px; font-weight: 700; margin: 6px 0; }
-.kpi-sub   { color: #8aa2d7; font-size: 12px; }
+.kpi-label {
+  color: #6b7a9e;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+}
+.kpi-value { font-size: 24px; font-weight: 800; margin: 6px 0; color: #312e81; }
+.kpi-sub   { color: #8b92b2; font-size: 12px; }
 
+/* Subheadings inside results card */
 .subhead {
-  margin: 12px 0 6px;
-  font-size: 14px;
-  color: #cfe0ff;
+  margin: 14px 0 8px;
+  font-size: 13px;
+  font-weight: 700;
+  color: #4f46e5;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
 }
-.targets { list-style: none; padding: 0; margin: 0 0 10px; }
-.targets li { padding: 8px 0; border-bottom: 1px dashed rgba(120,160,255,0.2); }
+
+/* Targets list */
+.targets { list-style: none; padding: 0; margin: 0 0 12px; }
+.targets li {
+  padding: 9px 0;
+  border-bottom: 1px solid rgba(99, 102, 241, 0.08);
+  font-size: 14px;
+  color: #374169;
+}
 .targets li:last-child { border-bottom: 0; }
 
+/* Macro bar */
 .macro {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  background: #0e1a2f;
-  border: 1px solid rgba(120,160,255,0.2);
+  background: #f5f3ff;
+  border: 1px solid rgba(99, 102, 241, 0.14);
   border-radius: 12px;
   overflow: hidden;
 }
-.macro > div { padding: 12px; border-right: 1px solid rgba(120,160,255,0.15); }
+.macro > div { padding: 14px; border-right: 1px solid rgba(99, 102, 241, 0.1); }
 .macro > div:last-child { border-right: 0; }
-.macro span { color: #9fb6ff; display: block; margin-bottom: 4px; }
-.macro b { font-size: 18px; }
+.macro span { color: #6b7a9e; display: block; margin-bottom: 4px; font-size: 11.5px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.3px; }
+.macro b { font-size: 20px; font-weight: 800; color: #312e81; }
 
+/* Facts hint row */
+.facts {
+  display: flex;
+  gap: 18px;
+  margin-top: 6px;
+  color: #8b92b2;
+  font-size: 13px;
+}
+.facts .hint { color: #6366f1; }
+
+/* Disclaimer */
 .disclaimer {
-  margin-top: 12px;
-  color: #8aa2d7;
+  margin-top: 14px;
+  color: #8b92b2;
   font-size: 12px;
-  line-height: 1.5;
+  line-height: 1.6;
 }

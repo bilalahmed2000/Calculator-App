@@ -1,27 +1,29 @@
 /* ====== Design tokens ====== */
 :root {
-  --bg: #0b1020;
-  --bg-hero: radial-gradient(1200px 600px at 10% -20%, #1d2b64 0%, transparent 60%),
-             radial-gradient(900px 500px at 110% 10%, #f8cdda 0%, transparent 55%);
-  --surface: rgba(255, 255, 255, 0.06);
-  --surface-strong: rgba(255, 255, 255, 0.12);
-  --text: #eaf0ff;
-  --muted: #a7b2c3;
-  --brand: #4fe3c1;
-  --brand-2: #7aa2ff;
-  --shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+  --bg: #f4f6ff;
+  --surface: rgba(255, 255, 255, 0.92);
+  --surface-strong: rgba(99, 102, 241, 0.07);
+  --text: #1e1b4b;
+  --muted: #6b7a9e;
+  --brand: #6366f1;
+  --brand-2: #8b5cf6;
+  --shadow: 0 2px 16px rgba(79, 70, 229, 0.09), 0 1px 4px rgba(79, 70, 229, 0.06);
   --radius: 14px;
   --radius-sm: 10px;
-  --blur: 12px;
-  --speed: 220ms;
+  --blur: 16px;
+  --speed: 200ms;
 }
 
-/* Prefer dark scheme if user opted in */
-@media (prefers-color-scheme: light) {
-  :root {
-    --bg: #0e1330;
-    --text: #f5f7ff;
-  }
+/* ====== Body background ====== */
+body {
+  background: var(--bg);
+  background-image:
+    radial-gradient(1000px 500px at 10% -10%, rgba(99,102,241,0.06) 0%, transparent 60%),
+    radial-gradient(800px 400px at 90%   0%,  rgba(139,92,246,0.05) 0%, transparent 60%);
+  background-attachment: fixed;
+  color: var(--text);
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, Inter,
+               "Helvetica Neue", Arial, "Noto Sans", sans-serif;
 }
 
 /* ====== Navbar ====== */
@@ -35,11 +37,9 @@
   padding: 14px 28px;
   margin: 10px auto;
   max-width: 1200px;
-
-  /* glass + subtle gradient border */
-  background: linear-gradient(180deg, rgba(255,255,255,0.08), rgba(255,255,255,0.04)) , var(--surface);
+  background: var(--surface);
   backdrop-filter: blur(var(--blur));
-  border: 1px solid rgba(255,255,255,0.14);
+  border: 1px solid rgba(99, 102, 241, 0.15);
   border-radius: var(--radius);
   box-shadow: var(--shadow);
 }
@@ -47,93 +47,74 @@
 /* Brand */
 .navbar-logo a {
   color: var(--brand);
-  font-size: 22px;
+  font-size: 20px;
   font-weight: 800;
   text-decoration: none;
-  letter-spacing: 0.4px;
+  letter-spacing: 0.2px;
   display: inline-flex;
   align-items: center;
   gap: 10px;
-  transition: transform var(--speed) ease;
+  transition: transform var(--speed) ease, opacity var(--speed) ease;
 }
-
 .navbar-logo a::before {
   content: "";
   width: 10px;
   height: 10px;
-  background: radial-gradient(circle at 30% 30%, var(--brand), var(--brand-2));
+  background: linear-gradient(135deg, var(--brand), var(--brand-2));
   border-radius: 50%;
-  box-shadow: 0 0 18px var(--brand);
+  box-shadow: 0 0 12px rgba(99, 102, 241, 0.5);
+  flex-shrink: 0;
 }
-.navbar-logo a:hover { transform: translateY(-1px) scale(1.02); }
+.navbar-logo a:hover { transform: translateY(-1px); opacity: 0.85; }
 
-/* Links */
+/* Nav links */
 .navbar-links {
   list-style: none;
   display: flex;
   align-items: center;
-  gap: 24px;
+  gap: 6px;
   margin: 0;
   padding: 0;
 }
-
 .navbar-links a {
   position: relative;
-  color: var(--text);
+  color: #4b5280;
   text-decoration: none;
-  font-size: 15px;
+  font-size: 13.5px;
   font-weight: 600;
-  letter-spacing: 0.2px;
-  opacity: 0.92;
-  transition: opacity var(--speed) ease;
+  letter-spacing: 0.25px;
+  padding: 7px 13px;
+  border-radius: 9px;
+  transition: background var(--speed) ease, color var(--speed) ease;
 }
-
-/* underline hover */
-.navbar-links a::after {
-  content: "";
-  position: absolute;
-  left: 0;
-  bottom: -6px;
-  width: 0%;
-  height: 2px;
-  border-radius: 2px;
-  background: linear-gradient(90deg, var(--brand), var(--brand-2));
-  transition: width var(--speed) ease;
-}
-
 .navbar-links a:hover {
-  opacity: 1;
-}
-.navbar-links a:hover::after {
-  width: 100%;
+  background: rgba(99, 102, 241, 0.09);
+  color: var(--brand);
 }
 
 /* ====== Mobile ====== */
 .navbar-toggle {
   display: none;
-  width: 42px;
-  height: 38px;
+  width: 40px;
+  height: 36px;
   border-radius: var(--radius-sm);
-  border: 1px solid rgba(255,255,255,0.14);
+  border: 1.5px solid rgba(99, 102, 241, 0.2);
   background: var(--surface-strong);
   color: var(--text);
   cursor: pointer;
   place-items: center;
-  transition: background var(--speed) ease, transform var(--speed) ease;
+  transition: background var(--speed) ease;
 }
-.navbar-toggle:active { transform: scale(0.98); }
+.navbar-toggle:hover { background: rgba(99, 102, 241, 0.12); }
 
-/* optional icon bars */
 .navbar-toggle .bar {
-  width: 20px;
+  width: 18px;
   height: 2px;
   border-radius: 2px;
-  background: var(--text);
+  background: var(--brand);
   margin: 3px 0;
-  opacity: 0.9;
 }
 
-/* collapse layout */
 @media (max-width: 860px) {
   .navbar { padding: 12px 16px; }
   .navbar-toggle { display: grid; }
@@ -143,33 +124,25 @@
     right: 12px;
     top: 68px;
     flex-direction: column;
-    gap: 14px;
-    padding: 14px;
-    width: min(90vw, 280px);
-    background: var(--surface);
-    border: 1px solid rgba(255,255,255,0.12);
+    align-items: stretch;
+    gap: 4px;
+    padding: 10px;
+    width: min(88vw, 260px);
+    background: rgba(255, 255, 255, 0.97);
+    border: 1px solid rgba(99, 102, 241, 0.15);
     border-radius: var(--radius);
     backdrop-filter: blur(var(--blur));
-    box-shadow: var(--shadow);
+    box-shadow: 0 8px 32px rgba(79, 70, 229, 0.12);
     transform-origin: top right;
-    transform: scale(0.98);
+    transform: scale(0.97);
     opacity: 0;
     pointer-events: none;
     transition: opacity var(--speed) ease, transform var(--speed) ease;
   }
-
-  /* Add a class .open on click via JS */
   .navbar-links.open {
     opacity: 1;
     transform: scale(1);
     pointer-events: auto;
   }
-}
-
-/* Page background (apply on <body>) */
-body {
-  background: var(--bg), var(--bg-hero), var(--bg);
-  background-color: var(--bg);
-  color: var(--text);
-  font-family: system-ui, -apple-system, "Segoe UI", Roboto, Inter, "Helvetica Neue", Arial, "Noto Sans", "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+  .navbar-links a { padding: 10px 14px; }
 }

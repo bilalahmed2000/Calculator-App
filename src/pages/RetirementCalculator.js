@@ -78,8 +78,8 @@ function ResultBar({ title = "Result" }) {
   return (
     <div
       style={{
-        background: "rgba(120,255,140,0.18)",
-        border: "1px solid rgba(120,255,140,0.25)",
+        background: "rgba(16, 185, 129, 0.10)",
+        border: "1px solid rgba(16, 185, 129, 0.30)",
         borderRadius: 12,
         padding: "10px 12px",
         fontWeight: 900,
@@ -87,7 +87,7 @@ function ResultBar({ title = "Result" }) {
         display: "flex",
         justifyContent: "space-between",
         alignItems: "center",
-        color: "rgba(255,255,255,0.92)",
+        color: "#065f46",
       }}
     >
       <span>{title}</span>
@@ -460,7 +460,7 @@ export default function RetirementCalculator() {
 
         <div className="calc-grid" style={{ marginTop: 12 }}>
           {/* Left */}
-          <div className="card" style={{ background: "rgba(255,255,255,0.04)" }}>
+          <div className="card" style={{ background: "#f8f9ff" }}>
             <div className="row two">
               <div className="field">
                 <label>Your current age</label>
@@ -813,7 +813,7 @@ export default function RetirementCalculator() {
               const interestHaveNow = target - start;
 
               const blockTitle = (t) => (
-                <div style={{ marginTop: 10, padding: "6px 10px", borderRadius: 10, background: "rgba(255,255,255,0.06)", fontWeight: 900 }}>
+                <div style={{ marginTop: 10, padding: "6px 10px", borderRadius: 10, background: "#f0eeff", color: "#312e81", fontWeight: 900 }}>
                   {t}
                 </div>
               );

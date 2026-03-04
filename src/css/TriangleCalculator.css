@@ -1,0 +1,337 @@
+/* ============================================================
+   TriangleCalculator.css  — light indigo/lavender theme
+   ============================================================ */
+
+/* ---------- Page layout ---------- */
+.tri-layout {
+  display: grid;
+  grid-template-columns: 1fr 260px;
+  gap: 24px;
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 0 16px 48px;
+}
+
+.tri-main {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+/* ---------- Unit toggle ---------- */
+.tri-unit-row {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 22px;
+}
+
+.tri-unit-label {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #4f46e5;
+}
+
+.tri-unit-tabs {
+  display: flex;
+  border: 1.5px solid rgba(99, 102, 241, 0.3);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.tri-unit-tab {
+  padding: 6px 18px;
+  font-size: 0.83rem;
+  font-weight: 600;
+  background: #fff;
+  color: #6b7280;
+  border: none;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+}
+
+.tri-unit-tab:hover {
+  background: #f5f3ff;
+  color: #4f46e5;
+}
+
+.tri-unit-tab--active {
+  background: linear-gradient(135deg, #6366f1, #8b5cf6);
+  color: #fff !important;
+}
+
+/* ---------- Triangle diagram container ---------- */
+.tri-diagram-wrap {
+  position: relative;
+  width: 520px;
+  height: 275px;
+  margin: 0 auto 18px;
+  /* Subtle bordered box as requested */
+  background: #f8f9ff;
+  border: 1.5px solid rgba(99, 102, 241, 0.2);
+  border-radius: 12px;
+  padding: 0;
+  user-select: none;
+}
+
+/* The SVG sits inside the bordered box */
+.tri-svg {
+  position: absolute;
+  left: 100px;
+  top: 25px;
+  width: 320px;
+  height: 210px;
+}
+
+/* ---------- Input groups (shared) ---------- */
+.tri-input-group {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  width: 96px;
+}
+
+.tri-inp-label {
+  font-size: 0.68rem;
+  font-weight: 700;
+  color: #4f46e5;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  white-space: nowrap;
+}
+
+.tri-inp {
+  width: 100%;
+  padding: 5px 8px;
+  border: 1.5px solid rgba(99, 102, 241, 0.35);
+  border-radius: 7px;
+  background: #fff;
+  color: #1e1b4b;
+  font-size: 0.85rem;
+  font-weight: 500;
+  text-align: center;
+  transition: border-color 0.15s, box-shadow 0.15s;
+  /* Remove number input spinners */
+  -moz-appearance: textfield;
+}
+
+.tri-inp::-webkit-inner-spin-button,
+.tri-inp::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.tri-inp:focus {
+  outline: none;
+  border-color: #6366f1;
+  background: #fff;
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.14);
+}
+
+/* ---------- Positioned inputs (SVG at left:100, top:25) ----------
+   SVG vertices in container space:
+     A = (40+100, 188+25) = (140, 213)
+     B = (280+100, 188+25) = (380, 213)
+     C = (160+100, 18+25)  = (260, 43)
+   Side midpoints:
+     a (BC) = (320, 128)   side b (AC) = (200, 128)   side c (AB) = (260, 213)
+   ----------------------------------------------------------- */
+
+/* Angle C — top center, above the apex */
+.tri-pos-C {
+  left: 213px; /* (260 - 96/2) ≈ 212 */
+  top: 4px;
+}
+
+/* Side b — left side, mid-height */
+.tri-pos-b {
+  left: 6px;
+  top: 98px; /* near mid of left side (128) */
+}
+
+/* Side a — right side, mid-height */
+.tri-pos-a {
+  left: 418px;
+  top: 98px;
+}
+
+/* Angle A — bottom left */
+.tri-pos-A {
+  left: 10px;
+  top: 212px;
+}
+
+/* Side c — bottom center */
+.tri-pos-c {
+  left: 213px;
+  top: 236px;
+}
+
+/* Angle B — bottom right */
+.tri-pos-B {
+  left: 414px;
+  top: 212px;
+}
+
+/* ---------- Buttons ---------- */
+.tri-btn-row {
+  display: flex;
+  gap: 12px;
+  margin-top: 4px;
+}
+
+/* ---------- Error message ---------- */
+.tri-error {
+  margin-top: 14px;
+  padding: 10px 14px;
+  background: rgba(239, 68, 68, 0.08);
+  border: 1.5px solid rgba(239, 68, 68, 0.25);
+  border-radius: 8px;
+  color: #991b1b;
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+/* ---------- Results ---------- */
+.tri-result-card {
+  margin-top: 20px;
+}
+
+.tri-ambiguous-badge {
+  display: inline-block;
+  padding: 4px 12px;
+  background: rgba(245, 158, 11, 0.12);
+  border: 1.5px solid rgba(245, 158, 11, 0.35);
+  border-radius: 20px;
+  color: #92400e;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 12px;
+}
+
+.tri-section-label {
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: #6366f1;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-bottom: 10px;
+}
+
+.tri-kpi-row {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  margin-bottom: 4px;
+}
+
+/* Extras row (perimeter, semiperimeter, area) */
+.tri-extras-row {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  margin-top: 18px;
+  padding-top: 16px;
+  border-top: 1.5px solid rgba(99, 102, 241, 0.12);
+}
+
+.tri-extra-kpi {
+  background: #f5f3ff;
+  border: 1.5px solid rgba(99, 102, 241, 0.15);
+  border-radius: 10px;
+  padding: 12px 10px;
+  text-align: center;
+}
+
+.tri-extra-val {
+  font-size: 1.05rem !important;
+  font-weight: 700;
+  color: #1e1b4b;
+}
+
+.tri-area-box {
+  background: rgba(16, 185, 129, 0.08);
+  border-color: rgba(16, 185, 129, 0.3);
+}
+
+/* ---------- Info list ---------- */
+.tri-info-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.tri-info-list li {
+  padding: 10px 14px;
+  background: #f8f9ff;
+  border-left: 3px solid #6366f1;
+  border-radius: 0 8px 8px 0;
+  font-size: 0.875rem;
+  color: #374151;
+  line-height: 1.5;
+}
+
+.tri-info-list li strong {
+  color: #4338ca;
+}
+
+/* ---------- Responsive ---------- */
+@media (max-width: 960px) {
+  .tri-layout {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 600px) {
+  .tri-diagram-wrap {
+    width: 100%;
+    height: 220px;
+    overflow: visible;
+  }
+
+  .tri-svg {
+    left: 50%;
+    transform: translateX(-50%);
+    width: 200px;
+    height: 130px;
+    top: 15px;
+  }
+
+  /* Stack inputs below the diagram on mobile */
+  .tri-input-group {
+    position: static;
+    width: auto;
+  }
+
+  .tri-diagram-wrap {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: flex-start;
+    padding: 10px;
+    height: auto;
+    gap: 8px;
+  }
+
+  .tri-svg {
+    position: relative;
+    left: auto;
+    top: auto;
+    transform: none;
+    width: 100%;
+    height: 130px;
+    flex: 0 0 100%;
+  }
+
+  .tri-kpi-row,
+  .tri-extras-row {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
