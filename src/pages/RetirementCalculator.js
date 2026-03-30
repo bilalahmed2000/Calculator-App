@@ -414,7 +414,7 @@ export default function RetirementCalculator() {
     setFutureSavingsMode(DEFAULTS.futureSavingsMode);
     setFutureSavingsPct(DEFAULTS.futureSavingsPct);
     setFutureSavingsAmount(DEFAULTS.futureSavingsAmount);
-    setShowS1(true);
+    setShowS1(false);
   };
 
   const clearS2 = () => {
@@ -423,7 +423,7 @@ export default function RetirementCalculator() {
     setS2NeedAtRetire(DEFAULTS.s2NeedAtRetire);
     setS2SavingsNow(DEFAULTS.s2SavingsNow);
     setS2ReturnPct(DEFAULTS.s2ReturnPct);
-    setShowS2(true);
+    setShowS2(false);
   };
 
   const clearS3 = () => {
@@ -435,14 +435,14 @@ export default function RetirementCalculator() {
     setWMonthlyContrib(DEFAULTS.wMonthlyContrib);
     setWReturnPct(DEFAULTS.wReturnPct);
     setWInflationPct(DEFAULTS.wInflationPct);
-    setShowS3(true);
+    setShowS3(false);
   };
 
   const clearS4 = () => {
     setLumpSum(DEFAULTS.lumpSum);
     setWithdrawMonthly(DEFAULTS.withdrawMonthly);
     setLReturnPct(DEFAULTS.lReturnPct);
-    setShowS4(true);
+    setShowS4(false);
   };
 
   return (

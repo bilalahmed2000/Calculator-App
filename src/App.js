@@ -31,8 +31,12 @@ import FractionCalculator from './pages/FractionCalculator';
 import PercentageCalculator from './pages/PercentageCalculator';
 import RandomNumberGenerator from './pages/RandomNumberGenerator';
 import TriangleCalculator from './pages/TriangleCalculator';
-
-
+import StandardDeviationCalculator from './pages/StandardDeviationCalculator';
+import HoursCalculator from './pages/HoursCalculator';
+import GPACalculator from './pages/GPACalculator';
+import IPSubnetCalculator from './pages/IPSubnetCalculator';
+import GradeCalculator from './pages/GradeCalculator';
+import ConcreteCalculator from './pages/ConcreteCalculator';
 
 function App() {
   return (
@@ -58,7 +62,7 @@ function App() {
            <Route path="/date" element={<DateCalculator />} />
            <Route path="/time" element={<TimeCalculator />} />
            <Route path="/payment" element={<PaymentCalculator />} />
-          <Route path="/retirement" element={<RetirementCalculator />} /> 
+          <Route path="/retirement" element={<RetirementCalculator />} />
           <Route path="/amortization" element={<AmortizationCalculator />} />
           <Route path="/investment" element={<InvestmentCalculator />} />
           <Route path="/inflation" element={<InflationCalculator />} />
@@ -68,10 +72,15 @@ function App() {
           <Route path="/percentage-calculator" element={<PercentageCalculator />} />
           <Route path="/random-number-generator" element={<RandomNumberGenerator />} />
           <Route path="/triangle-calculator" element={<TriangleCalculator />} />
-
-
-
-
+          <Route path="/standard-deviation-calculator" element={<StandardDeviationCalculator />} />
+          <Route path="/std-dev" element={<StandardDeviationCalculator />} />
+          <Route path="/fraction" element={<FractionCalculator />} />
+          <Route path="/percentage" element={<PercentageCalculator />} />
+          <Route path="/hours-calculator" element={<HoursCalculator />} />
+          <Route path="/gpa-calculator" element={<GPACalculator />} />
+          <Route path="/ip-subnet-calculator" element={<IPSubnetCalculator />} />
+          <Route path="/grade-calculator" element={<GradeCalculator />} />
+          <Route path="/concrete-calculator" element={<ConcreteCalculator />} />
       </Routes>
     </Router>
   );

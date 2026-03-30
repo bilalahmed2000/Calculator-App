@@ -1,630 +1,749 @@
-import React, { useMemo, useState } from "react";
-import "../css/CalcBase.css";
-
 /**
- * Percentage Calculator (calculator.net replica behavior)
- * - 4 blocks:
- *   1) % of:      A% of B = C  (any two values -> compute the third)
- *   2) Common phrases:
- *        a) what is A% of B
- *        b) X is what % of Y
- *        c) X is A% of what
- *   3) Percentage difference: compare two values
- *   4) Percentage change: increase/decrease by %
+ * PercentageCalculator.js
+ * Full rewrite — matches calculator.net behavior with Smart Calculators theme.
  *
- * Results are shown ONLY after Calculate is clicked for that block.
- * Clear resets inputs to blank blocks (empty strings) and hides the result for that block.
+ * Sections:
+ *   1) Percentage Calculator          — A% of B = C  (solve any missing field)
+ *   2) Common Phrases                 — 3 sub-calculators (each has its own Calculate/Clear)
+ *   3) Percentage Difference          — |V1−V2| / avg × 100
+ *   4) Percentage Change              — Increase/Decrease (solve for any of the 3 fields)
+ *
+ * Layout: two-column (main + sidebar) using SharedCalcLayout.css
  */
 
-// ---------- helpers ----------
+import React, { useState } from "react";
+import { Link } from "react-router-dom";
+import "../css/CalcBase.css";
+import "../css/SharedCalcLayout.css";
+
+/* ═══════════════════════════════════════════════
+   MATH HELPERS
+   ═══════════════════════════════════════════════ */
+
+/** Parse a string to a finite number; returns null if empty, NaN if invalid. */
 const toNum = (v) => {
-  if (v === "" || v === null || v === undefined) return null; // IMPORTANT: null means "missing"
-  const s = String(v).replace(/[, %]/g, "").trim();
+  if (v === "" || v === null || v === undefined) return null;
+  const s = String(v).replace(/[,%\s]/g, "");
   if (s === "") return null;
   const n = Number(s);
-  return Number.isFinite(n) ? n : null;
+  return Number.isFinite(n) ? n : NaN;
 };
 
-const isCloseToInt = (n) => Math.abs(n - Math.round(n)) < 1e-12;
-
+/** Format a number: integer if close to integer, otherwise up to 6 decimal places (no trailing zeros). */
 const fmt = (n) => {
-  if (!Number.isFinite(n)) return "";
-  if (isCloseToInt(n)) return String(Math.round(n));
-  // show like calculator.net (can be long). We'll cap, but keep meaningful.
-  // 15 significant digits, strip trailing zeros
-  const s = Number(n).toPrecision(15);
-  // Convert possible scientific notation to normal if small
-  const num = Number(s);
-  let out = String(num);
-  if (out.includes("e")) {
-    // fallback to fixed
-    out = num.toFixed(12);
-  }
-  // strip trailing zeros
-  if (out.includes(".")) out = out.replace(/\.?0+$/, "");
-  return out;
+  if (!Number.isFinite(n)) return "—";
+  if (Math.abs(n - Math.round(n)) < 1e-9) return String(Math.round(n));
+  // toPrecision(10) to avoid floating-point noise, then strip trailing zeros
+  const raw = Number(n.toPrecision(10));
+  let s = String(raw);
+  if (s.includes("e")) s = raw.toFixed(10);
+  if (s.includes(".")) s = s.replace(/\.?0+$/, "");
+  return s;
 };
 
-const fmtPercent = (n) => `${fmt(n)}%`;
+const fmtPct = (n) => `${fmt(n)}%`;
 
-const GreenResultBar = ({ title }) => (
-  <div
-    style={{
-      background: "rgba(16, 185, 129, 0.12)",
-      border: "1px solid rgba(16, 185, 129, 0.35)",
-      padding: "10px 12px",
-      borderRadius: 12,
-      margin: "6px 0 10px",
-      fontWeight: 900,
-      fontSize: 18,
-      color: "#065f46",
-    }}
-  >
-    {title}
-  </div>
-);
+/* ═══════════════════════════════════════════════
+   SHARED MINI-COMPONENTS
+   ═══════════════════════════════════════════════ */
 
-const Panel = ({ children }) => (
-  <div
-    style={{
-      background: "#f5f3ff",
-      border: "1px solid rgba(99, 102, 241, 0.18)",
-      borderRadius: 12,
-      padding: 14,
-      maxWidth: 520,
-      color: "#1e1b4b",
-    }}
-  >
-    {children}
-  </div>
-);
-
-const InlineInput = ({ value, onChange, placeholder, style }) => (
+/** Themed inline text input used inside phrase rows. */
+const InField = ({ value, onChange, width = 96 }) => (
   <input
+    type="text"
+    inputMode="decimal"
     value={value}
     onChange={(e) => onChange(e.target.value)}
-    placeholder={placeholder}
     style={{
-      width: 120,
-      ...style,
+      width,
+      padding: "8px 10px",
+      borderRadius: 10,
+      border: "1.5px solid rgba(99,102,241,0.25)",
+      background: "#f8f9ff",
+      color: "#1e1b4b",
+      fontSize: 15,
+      fontWeight: 600,
+      outline: "none",
+      boxSizing: "border-box",
+      flexShrink: 0,
     }}
   />
 );
 
-const ActionRow = ({ onCalc, onClear, calcLabel = "Calculate" }) => (
-  <div className="row" style={{ gap: 10, marginTop: 10 }}>
-    <button type="button" className="btn" onClick={onCalc}>
-      {calcLabel}
-    </button>
-    <button type="button" className="btn btn-secondary" onClick={onClear}>
-      Clear
+/** Bold text label used between inputs in a phrase row. */
+const Lbl = ({ children }) => (
+  <span style={{ fontWeight: 700, color: "#374151", fontSize: 15, whiteSpace: "nowrap" }}>
+    {children}
+  </span>
+);
+
+/** Green result header bar (matches calculator.net style). */
+const ResultBar = ({ label }) => (
+  <div className="result-header">
+    <span>{label}</span>
+    <button
+      type="button"
+      className="link-btn"
+      onClick={() => window.print()}
+      title="Print this result"
+    >
+      Print
     </button>
   </div>
 );
 
+/** Inline error box. */
+const ErrBox = ({ msg }) =>
+  msg ? <div className="rng-error" style={{ marginTop: 12 }}>{msg}</div> : null;
+
+/** Step-by-step calculation list shown under the result bar. */
+const StepList = ({ lines }) =>
+  lines?.length > 0 ? (
+    <div style={{ marginTop: 10, fontSize: 13.5, lineHeight: 1.85 }}>
+      <span style={{ fontWeight: 700, color: "#374151" }}>Steps:</span>
+      {lines.map((l, i) => (
+        <div key={i} style={{ color: "#4b5280" }}>
+          {l}
+        </div>
+      ))}
+    </div>
+  ) : null;
+
+/**
+ * Universal result block.
+ * res = null         → renders nothing
+ * res.err (string)   → error box
+ * res.title / .equation / .steps / .extras → success display
+ */
+function ResultBlock({ res }) {
+  if (!res) return null;
+  if (res.err) return <ErrBox msg={res.err} />;
+  return (
+    <div style={{ marginTop: 14 }}>
+      <ResultBar label={res.title} />
+      {res.equation && (
+        <div style={{ fontSize: 15.5, fontWeight: 600, color: "#1e1b4b", marginBottom: 4 }}>
+          {res.equation}
+        </div>
+      )}
+      <StepList lines={res.steps} />
+      {res.extras?.map((l, i) => (
+        <div key={i} style={{ fontSize: 13.5, color: "#6b7a9e", marginTop: 6 }}>
+          {l}
+        </div>
+      ))}
+    </div>
+  );
+}
+
+/** Calculate + Clear button pair (flex, not full-width). */
+function BtnRow({ onCalc, onClear }) {
+  return (
+    <div style={{ display: "flex", gap: 10, marginTop: 14, flexWrap: "wrap" }}>
+      <button
+        type="button"
+        className="btn"
+        style={{ padding: "9px 24px", width: "auto" }}
+        onClick={onCalc}
+      >
+        Calculate
+      </button>
+      <button
+        type="button"
+        onClick={onClear}
+        style={{
+          padding: "9px 18px",
+          borderRadius: 12,
+          border: "1.5px solid rgba(99,102,241,0.22)",
+          background: "#fff",
+          color: "#6b7a9e",
+          fontWeight: 700,
+          fontSize: 14,
+          cursor: "pointer",
+          width: "auto",
+        }}
+      >
+        Clear
+      </button>
+    </div>
+  );
+}
+
+/* ═══════════════════════════════════════════════
+   SIDEBAR
+   ═══════════════════════════════════════════════ */
+
+const MATH_LINKS = [
+  { to: "/scientific", label: "Scientific Calculator" },
+  { to: "/percentage-calculator", label: "Percentage Calculator", active: true },
+  { to: "/fraction-calculator", label: "Fraction Calculator" },
+  { to: "/triangle-calculator", label: "Triangle Calculator" },
+  { to: "/standard-deviation-calculator", label: "Standard Deviation" },
+  { to: "/random-number-generator", label: "Random Number Generator" },
+  { to: "/hours-calculator", label: "Hours Calculator" },
+  { to: "/gpa-calculator", label: "GPA Calculator" },
+  { to: "/grade-calculator", label: "Grade Calculator" },
+];
+
+function Sidebar() {
+  const [q, setQ] = useState("");
+  return (
+    <aside className="rng-sidebar">
+      {/* Search */}
+      <div className="card rng-sidebar-card" style={{ marginBottom: 14 }}>
+        <div className="rng-sidebar-title">Search</div>
+        <div style={{ display: "flex", gap: 6 }}>
+          <input
+            value={q}
+            onChange={(e) => setQ(e.target.value)}
+            placeholder="Search calculators…"
+            style={{
+              flex: 1,
+              padding: "7px 10px",
+              borderRadius: 9,
+              border: "1.5px solid rgba(99,102,241,0.2)",
+              background: "#f8f9ff",
+              fontSize: 13,
+              color: "#1e1b4b",
+              outline: "none",
+            }}
+          />
+          <button
+            className="btn"
+            style={{ padding: "7px 12px", width: "auto", fontSize: 13 }}
+          >
+            Go
+          </button>
+        </div>
+      </div>
+
+      {/* Math Calculators list */}
+      <div className="card rng-sidebar-card">
+        <div className="rng-sidebar-title">Math Calculators</div>
+        <ul className="rng-sidebar-list">
+          {MATH_LINKS.map(({ to, label, active }) => (
+            <li key={to}>
+              <Link
+                to={to}
+                className={`rng-sidebar-link${active ? " rng-sidebar-link--active" : ""}`}
+              >
+                {label}
+              </Link>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </aside>
+  );
+}
+
+/* ═══════════════════════════════════════════════
+   MAIN COMPONENT
+   ═══════════════════════════════════════════════ */
+
 export default function PercentageCalculator() {
-  // -------------------------
-  // Block 1: A% of B = C
-  // -------------------------
-  const [p1, setP1] = useState("");
-  const [b1, setB1] = useState("");
-  const [r1, setR1] = useState("");
-  const [show1, setShow1] = useState(false);
-  const [res1, setRes1] = useState(null); // { title, line, steps }
+  /* ── shared style objects (defined once to avoid recreation on each render) ── */
+  const boxSt = {
+    background: "#f5f3ff",
+    border: "1px solid rgba(99,102,241,0.12)",
+    borderRadius: 12,
+    padding: "16px 18px",
+    marginBottom: 12,
+  };
+  const phraseBoxSt = { ...boxSt, marginBottom: 14 };
+  const flexRow = { display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap" };
 
-  const calcBlock1 = () => {
-    const P = toNum(p1);
-    const B = toNum(b1);
-    const R = toNum(r1);
+  /* ────────────────────────────────────────────────
+     BLOCK 1 — A% of B = C  (solve any one missing)
+     ──────────────────────────────────────────────── */
+  const [p1, setP1] = useState("");   // A (percentage)
+  const [b1, setB1] = useState("");   // B (base value)
+  const [c1, setC1] = useState("");   // C (result value)
+  const [res1, setRes1] = useState(null);
 
-    const filled = [P, B, R].filter((x) => x !== null).length;
-    if (filled < 2) {
-      setRes1({
-        title: "Result: —",
-        line: "Please provide any two values.",
-        steps: [],
-      });
-      setShow1(true);
+  const calc1 = () => {
+    const A = toNum(p1), B = toNum(b1), C = toNum(c1);
+
+    // Validate inputs
+    if (Number.isNaN(A) || Number.isNaN(B) || Number.isNaN(C)) {
+      setRes1({ err: "Please enter valid numbers only." });
+      return;
+    }
+    const nulls = [A, B, C].filter((x) => x === null).length;
+    if (nulls > 1) {
+      setRes1({ err: "Please provide any two values and leave one field empty." });
       return;
     }
 
-    // Compute missing:
-    // If R missing: R = (P/100)*B
-    // If B missing: B = R / (P/100)
-    // If P missing: P = (R/B)*100
-    let outP = P;
-    let outB = B;
-    let outR = R;
+    // Determine which field to compute.
+    // Priority: if C is null (or all filled) → compute C; else if B null → compute B; else compute A.
+    let outA = A, outB = B, outC = C;
+    let steps = [];
+    let resultLabel = "";
+    let equation = "";
 
-    if (R === null) {
-      outR = (P / 100) * B;
-      setR1(fmt(outR));
+    if (C === null || nulls === 0) {
+      // Compute C = (A/100) × B
+      outC = (outA / 100) * outB;
+      resultLabel = fmt(outC);
+      equation = `${fmtPct(outA)} of ${fmt(outB)} = ${fmt(outC)}`;
+      steps = [
+        `C = A% × B`,
+        `C = ${fmt(outA)} ÷ 100 × ${fmt(outB)}`,
+        `C = ${fmt(outA / 100)} × ${fmt(outB)}`,
+        `C = ${fmt(outC)}`,
+      ];
     } else if (B === null) {
-      if (P === 0) {
-        setRes1({
-          title: "Result: —",
-          line: "Cannot compute because percent is 0.",
-          steps: [],
-        });
-        setShow1(true);
+      // Compute B = C / (A/100)
+      if (outA === 0) {
+        setRes1({ err: "Cannot compute: percentage (A) cannot be 0." });
         return;
       }
-      outB = R / (P / 100);
-      setB1(fmt(outB));
-    } else if (P === null) {
-      if (B === 0) {
-        setRes1({
-          title: "Result: —",
-          line: "Cannot compute because the base value is 0.",
-          steps: [],
-        });
-        setShow1(true);
+      outB = outC / (outA / 100);
+      resultLabel = fmt(outB);
+      equation = `${fmtPct(outA)} of ${fmt(outB)} = ${fmt(outC)}`;
+      steps = [
+        `B = C ÷ (A ÷ 100)`,
+        `B = ${fmt(outC)} ÷ (${fmt(outA)} ÷ 100)`,
+        `B = ${fmt(outC)} ÷ ${fmt(outA / 100)}`,
+        `B = ${fmt(outB)}`,
+      ];
+    } else {
+      // Compute A = (C/B) × 100
+      if (outB === 0) {
+        setRes1({ err: "Cannot compute: base value (B) cannot be 0." });
         return;
       }
-      outP = (R / B) * 100;
-      setP1(fmt(outP));
+      outA = (outC / outB) * 100;
+      resultLabel = fmtPct(outA);
+      equation = `${fmtPct(outA)} of ${fmt(outB)} = ${fmt(outC)}`;
+      steps = [
+        `A = (C ÷ B) × 100`,
+        `A = (${fmt(outC)} ÷ ${fmt(outB)}) × 100`,
+        `A = ${fmt(outC / outB)} × 100`,
+        `A = ${fmtPct(outA)}`,
+      ];
     }
 
-    const step = `${fmt(outP)}% of ${fmt(outB)} = ${fmt(outP / 100)} × ${fmt(outB)} = ${fmt(outR)}`;
-
-    setRes1({
-      title: `Result: ${fmt(outR)}`,
-      line: `${fmt(outP)}% of ${fmt(outB)} = `,
-      highlight: fmt(outR),
-      steps: [step],
-    });
-    setShow1(true);
+    setRes1({ title: `Result: ${resultLabel}`, equation, steps });
   };
 
-  const clearBlock1 = () => {
-    setP1("");
-    setB1("");
-    setR1("");
-    setShow1(false);
-    setRes1(null);
-  };
+  const clear1 = () => { setP1(""); setB1(""); setC1(""); setRes1(null); };
 
-  // -------------------------
-  // Block 2: Common Phrases
-  // (a) what is P% of B
-  // (b) X is what % of Y
-  // (c) X is P% of what
-  // -------------------------
+  /* ────────────────────────────────────────────────
+     BLOCK 2a — What is P% of N?
+     ──────────────────────────────────────────────── */
   const [p2a, setP2a] = useState("");
-  const [b2a, setB2a] = useState("");
-  const [show2a, setShow2a] = useState(false);
+  const [n2a, setN2a] = useState("");
   const [res2a, setRes2a] = useState(null);
 
   const calc2a = () => {
-    const P = toNum(p2a);
-    const B = toNum(b2a);
-    if (P === null || B === null) {
-      setRes2a({ title: "Result: —", line: "Please enter both values.", steps: [] });
-      setShow2a(true);
-      return;
-    }
-    const R = (P / 100) * B;
+    const P = toNum(p2a), N = toNum(n2a);
+    if (Number.isNaN(P) || Number.isNaN(N)) { setRes2a({ err: "Please enter valid numbers." }); return; }
+    if (P === null || N === null) { setRes2a({ err: "Please enter both values." }); return; }
+    const R = (P / 100) * N;
     setRes2a({
       title: `Result: ${fmt(R)}`,
-      line: `${fmt(R)} is ${fmt(P)}% of ${fmt(B)}.`,
-      steps: [`${fmt(P)}% × ${fmt(B)} = ${fmt(R)}`],
+      equation: `${fmtPct(P)} of ${fmt(N)} = ${fmt(R)}`,
+      steps: [
+        `R = P% × N`,
+        `R = ${fmt(P)} ÷ 100 × ${fmt(N)}`,
+        `R = ${fmt(P / 100)} × ${fmt(N)}`,
+        `R = ${fmt(R)}`,
+      ],
     });
-    setShow2a(true);
   };
+  const clear2a = () => { setP2a(""); setN2a(""); setRes2a(null); };
 
-  const clear2a = () => {
-    setP2a("");
-    setB2a("");
-    setShow2a(false);
-    setRes2a(null);
-  };
-
+  /* ────────────────────────────────────────────────
+     BLOCK 2b — X is what % of Y?
+     ──────────────────────────────────────────────── */
   const [x2b, setX2b] = useState("");
   const [y2b, setY2b] = useState("");
-  const [show2b, setShow2b] = useState(false);
   const [res2b, setRes2b] = useState(null);
 
   const calc2b = () => {
-    const X = toNum(x2b);
-    const Y = toNum(y2b);
-    if (X === null || Y === null) {
-      setRes2b({ title: "Result: —", line: "Please enter both values.", steps: [] });
-      setShow2b(true);
-      return;
-    }
-    if (Y === 0) {
-      setRes2b({ title: "Result: —", line: "Cannot divide by 0.", steps: [] });
-      setShow2b(true);
-      return;
-    }
+    const X = toNum(x2b), Y = toNum(y2b);
+    if (Number.isNaN(X) || Number.isNaN(Y)) { setRes2b({ err: "Please enter valid numbers." }); return; }
+    if (X === null || Y === null) { setRes2b({ err: "Please enter both values." }); return; }
+    if (Y === 0) { setRes2b({ err: "Cannot divide by zero (Y cannot be 0)." }); return; }
     const P = (X / Y) * 100;
     setRes2b({
-      title: `Result: ${fmtPercent(P)}`,
-      line: `${fmt(X)} is ${fmtPercent(P)} of ${fmt(Y)}.`,
-      steps: [`${fmt(X)} ÷ ${fmt(Y)} = ${fmt(X / Y)} = ${fmtPercent(P)}`],
+      title: `Result: ${fmtPct(P)}`,
+      equation: `${fmt(X)} is ${fmtPct(P)} of ${fmt(Y)}`,
+      steps: [
+        `P = (X ÷ Y) × 100`,
+        `P = (${fmt(X)} ÷ ${fmt(Y)}) × 100`,
+        `P = ${fmt(X / Y)} × 100`,
+        `P = ${fmtPct(P)}`,
+      ],
     });
-    setShow2b(true);
   };
+  const clear2b = () => { setX2b(""); setY2b(""); setRes2b(null); };
 
-  const clear2b = () => {
-    setX2b("");
-    setY2b("");
-    setShow2b(false);
-    setRes2b(null);
-  };
-
+  /* ────────────────────────────────────────────────
+     BLOCK 2c — X is P% of what?
+     ──────────────────────────────────────────────── */
   const [x2c, setX2c] = useState("");
   const [p2c, setP2c] = useState("");
-  const [show2c, setShow2c] = useState(false);
   const [res2c, setRes2c] = useState(null);
 
   const calc2c = () => {
-    const X = toNum(x2c);
-    const P = toNum(p2c);
-    if (X === null || P === null) {
-      setRes2c({ title: "Result: —", line: "Please enter both values.", steps: [] });
-      setShow2c(true);
-      return;
-    }
-    if (P === 0) {
-      setRes2c({ title: "Result: —", line: "Cannot compute with 0%.", steps: [] });
-      setShow2c(true);
-      return;
-    }
+    const X = toNum(x2c), P = toNum(p2c);
+    if (Number.isNaN(X) || Number.isNaN(P)) { setRes2c({ err: "Please enter valid numbers." }); return; }
+    if (X === null || P === null) { setRes2c({ err: "Please enter both values." }); return; }
+    if (P === 0) { setRes2c({ err: "Cannot compute: percentage cannot be 0." }); return; }
     const W = X / (P / 100);
     setRes2c({
       title: `Result: ${fmt(W)}`,
-      line: `${fmt(X)} is ${fmt(P)}% of ${fmt(W)}.`,
-      steps: [`${fmt(X)} ÷ ${fmt(P / 100)} = ${fmt(W)}`],
+      equation: `${fmt(X)} is ${fmtPct(P)} of ${fmt(W)}`,
+      steps: [
+        `W = X ÷ (P ÷ 100)`,
+        `W = ${fmt(X)} ÷ (${fmt(P)} ÷ 100)`,
+        `W = ${fmt(X)} ÷ ${fmt(P / 100)}`,
+        `W = ${fmt(W)}`,
+      ],
     });
-    setShow2c(true);
   };
+  const clear2c = () => { setX2c(""); setP2c(""); setRes2c(null); };
 
-  const clear2c = () => {
-    setX2c("");
-    setP2c("");
-    setShow2c(false);
-    setRes2c(null);
-  };
-
-  // -------------------------
-  // Block 3: Percentage Difference
-  // -------------------------
-  const [a3, setA3] = useState("");
-  const [b3, setB3] = useState("");
-  const [show3, setShow3] = useState(false);
+  /* ────────────────────────────────────────────────
+     BLOCK 3 — Percentage Difference
+     Formula: |V1 − V2| / ((V1 + V2) / 2) × 100
+     ──────────────────────────────────────────────── */
+  const [v1_3, setV1_3] = useState("");
+  const [v2_3, setV2_3] = useState("");
   const [res3, setRes3] = useState(null);
 
   const calc3 = () => {
-    const A = toNum(a3);
-    const B = toNum(b3);
-    if (A === null || B === null) {
-      setRes3({ title: "Result: —", line: "Please enter both values.", steps: [] });
-      setShow3(true);
-      return;
-    }
-    const denom = (A + B) / 2;
-    if (denom === 0) {
-      setRes3({ title: "Result: —", line: "Cannot compute because average is 0.", steps: [] });
-      setShow3(true);
+    const A = toNum(v1_3), B = toNum(v2_3);
+    if (Number.isNaN(A) || Number.isNaN(B)) { setRes3({ err: "Please enter valid numbers." }); return; }
+    if (A === null || B === null) { setRes3({ err: "Please enter both values." }); return; }
+    const avg = (A + B) / 2;
+    if (avg === 0) {
+      setRes3({ err: "The average of both values is 0; percentage difference is undefined." });
       return;
     }
     const diff = Math.abs(A - B);
-    const pd = (diff / denom) * 100;
+    const pd = (diff / avg) * 100;
 
-    const inc = B === 0 ? null : ((A - B) / B) * 100; // percent change from B to A
-    const incText =
-      inc === null
-        ? null
-        : inc === 0
-          ? `${fmt(A)} is the same as ${fmt(B)}.`
-          : inc > 0
-            ? `${fmt(A)} is a ${fmtPercent(inc)} increase of ${fmt(B)}.`
-            : `${fmt(A)} is a ${fmtPercent(Math.abs(inc))} decrease of ${fmt(B)}.`;
+    // Bonus: also show percentage change from V1 to V2
+    const extras = [];
+    if (A !== 0) {
+      const chg = ((B - A) / Math.abs(A)) * 100;
+      const dir = chg >= 0 ? "increase" : "decrease";
+      extras.push(
+        `Note: ${fmt(B)} is a ${fmtPct(Math.abs(chg))} ${dir} from ${fmt(A)}.`
+      );
+    }
 
     setRes3({
-      title: `Result: ${fmtPercent(pd)}`,
-      line: `Difference of ${fmt(A)} and ${fmt(B)} are ${fmtPercent(pd)}.`,
+      title: `Result: ${fmtPct(pd)}`,
+      equation: `Percentage difference between ${fmt(A)} and ${fmt(B)} = ${fmtPct(pd)}`,
       steps: [
-        `Difference of ${fmt(A)} and ${fmt(B)} = |${fmt(A)} - ${fmt(B)}| ÷ ((${fmt(A)} + ${fmt(B)}) ÷ 2)`,
-        `= ${fmt(diff)} ÷ ${fmt(denom)}`,
-        `= ${fmt(diff / denom)}`,
-        `= ${fmtPercent(pd)}`,
+        `|${fmt(A)} − ${fmt(B)}| ÷ ((${fmt(A)} + ${fmt(B)}) ÷ 2) × 100`,
+        `= ${fmt(diff)} ÷ ${fmt(avg)} × 100`,
+        `= ${fmt(diff / avg)} × 100`,
+        `= ${fmtPct(pd)}`,
       ],
-      extra: incText ? [incText, `Steps:`, `Percentage of increase = |${fmt(A)} - ${fmt(B)}| ÷ ${fmt(B)}`, `= ${fmt(diff)} ÷ ${fmt(B)}`, `= ${fmt(diff / B)}`, `= ${fmtPercent(Math.abs(inc))}`] : [],
+      extras,
     });
-    setShow3(true);
   };
+  const clear3 = () => { setV1_3(""); setV2_3(""); setRes3(null); };
 
-  const clear3 = () => {
-    setA3("");
-    setB3("");
-    setShow3(false);
-    setRes3(null);
-  };
-
-  // -------------------------
-  // Block 4: Percentage Change
-  // -------------------------
-  const [v4, setV4] = useState("");
-  const [mode4, setMode4] = useState("Increase"); // Increase | Decrease
-  const [p4, setP4] = useState("");
-  const [show4, setShow4] = useState(false);
+  /* ────────────────────────────────────────────────
+     BLOCK 4 — Percentage Change (3-way solve)
+     Fields: V (start), mode (Increase|Decrease), P (%), R (end)
+     Solve for whichever one field is empty.
+     ──────────────────────────────────────────────── */
+  const [v4, setV4] = useState("");        // starting value
+  const [p4, setP4] = useState("");        // percentage
+  const [r4, setR4] = useState("");        // resulting value
+  const [mode4, setMode4] = useState("Increase");
   const [res4, setRes4] = useState(null);
 
   const calc4 = () => {
-    const V = toNum(v4);
-    const P = toNum(p4);
-    if (V === null || P === null) {
-      setRes4({ title: "Result: —", line: "Please enter both values.", steps: [] });
-      setShow4(true);
+    const V = toNum(v4), P = toNum(p4), R = toNum(r4);
+    if (Number.isNaN(V) || Number.isNaN(P) || Number.isNaN(R)) {
+      setRes4({ err: "Please enter valid numbers." });
       return;
     }
-    const factor = mode4 === "Increase" ? 1 + P / 100 : 1 - P / 100;
-    const R = V * factor;
 
-    const sign = mode4 === "Increase" ? "+" : "-";
+    const nulls = [V, P, R].filter((x) => x === null).length;
+    if (nulls > 1) {
+      setRes4({ err: "Please provide any two values and leave one field empty." });
+      return;
+    }
+
+    // Determine target: priority V → P → R (if all filled, default to computing R)
+    let target;
+    if (V === null) target = "V";
+    else if (P === null) target = "P";
+    else target = "R"; // R null OR all filled
+
+    let outV = V ?? 0, outP = P ?? 0, outR = R ?? 0;
+    let outMode = mode4;
+    let steps = [];
+    let resultLabel = "";
+
+    if (target === "R") {
+      // R = V × (1 ± P/100)
+      const sign = mode4 === "Increase" ? 1 : -1;
+      const factor = 1 + sign * (outP / 100);
+      outR = outV * factor;
+      resultLabel = fmt(outR);
+      const opStr = mode4 === "Increase" ? "+" : "−";
+      steps = [
+        `R = V × (1 ${opStr} P ÷ 100)`,
+        `R = ${fmt(outV)} × (1 ${opStr} ${fmt(outP)} ÷ 100)`,
+        `R = ${fmt(outV)} × (1 ${opStr} ${fmt(outP / 100)})`,
+        `R = ${fmt(outV)} × ${fmt(factor)}`,
+        `R = ${fmt(outR)}`,
+      ];
+    } else if (target === "P") {
+      // P = |R − V| / V × 100  (direction auto-detected)
+      if (outV === 0) {
+        setRes4({ err: "Starting value cannot be 0 when computing the percentage." });
+        return;
+      }
+      outP = Math.abs((outR - outV) / outV) * 100;
+      outMode = outR >= outV ? "Increase" : "Decrease";
+      resultLabel = fmtPct(outP);
+      steps = [
+        `P = |R − V| ÷ V × 100`,
+        `P = |${fmt(outR)} − ${fmt(outV)}| ÷ ${fmt(outV)} × 100`,
+        `P = ${fmt(Math.abs(outR - outV))} ÷ ${fmt(outV)} × 100`,
+        `P = ${fmt(Math.abs(outR - outV) / outV)} × 100`,
+        `P = ${fmtPct(outP)}  (${outMode})`,
+      ];
+    } else {
+      // target === "V":  V = R / (1 ± P/100)
+      const sign = mode4 === "Increase" ? 1 : -1;
+      const factor = 1 + sign * (outP / 100);
+      if (factor === 0) {
+        setRes4({ err: "Factor is 0 (100% decrease of itself); cannot compute." });
+        return;
+      }
+      outV = outR / factor;
+      resultLabel = fmt(outV);
+      const opStr = mode4 === "Increase" ? "+" : "−";
+      steps = [
+        `V = R ÷ (1 ${opStr} P ÷ 100)`,
+        `V = ${fmt(outR)} ÷ (1 ${opStr} ${fmt(outP)} ÷ 100)`,
+        `V = ${fmt(outR)} ÷ (1 ${opStr} ${fmt(outP / 100)})`,
+        `V = ${fmt(outR)} ÷ ${fmt(factor)}`,
+        `V = ${fmt(outV)}`,
+      ];
+    }
+
+    const dirSymbol = outMode === "Increase" ? "+" : "−";
     setRes4({
-      title: `Result: ${fmt(R)}`,
-      line: `${fmt(V)} ${mode4 === "Increase" ? "increase" : "decrease"} ${fmt(P)}% = ${fmt(R)}`,
-      steps: [
-        `${fmt(V)} ${mode4 === "Increase" ? "increase" : "decrease"} ${fmt(P)}% =`,
-        `${fmt(V)} × (1 ${sign} ${fmt(P)}%) = ${fmt(V)} × (1 ${sign} ${fmt(P / 100)}) = ${fmt(R)}`,
-      ],
+      title: `Result: ${resultLabel}`,
+      equation: `${fmt(outV)} ${outMode === "Increase" ? "▲" : "▼"} ${dirSymbol}${fmtPct(outP)} = ${fmt(outR)}`,
+      steps,
     });
-    setShow4(true);
   };
 
   const clear4 = () => {
-    setV4("");
-    setMode4("Increase");
-    setP4("");
-    setShow4(false);
-    setRes4(null);
+    setV4(""); setP4(""); setR4(""); setMode4("Increase"); setRes4(null);
   };
 
+  /* ─────────────────────────────────────────────────
+     RENDER
+     ───────────────────────────────────────────────── */
   return (
     <div className="calc-wrap">
+      {/* ── Page Header ── */}
       <header className="calc-hero">
         <h1>Percentage Calculator</h1>
         <p className="muted">
-          Please provide any two values below and click the <b>Calculate</b> button to get the third value.
+          Please provide any two values below and click the <strong>Calculate</strong> button
+          to get the third value.
         </p>
       </header>
 
-      {/* ---------------- Block 1 ---------------- */}
-      {show1 && res1 && (
-        <section className="card" style={{ marginBottom: 16 }}>
-          <GreenResultBar title={res1.title} />
-          <div style={{ fontSize: 22, marginBottom: 10 }}>
-            {res1.line}
-            <span style={{ color: "rgb(60, 180, 75)", fontWeight: 900 }}>{res1.highlight}</span>
-          </div>
+      <div className="rng-layout">
+        {/* ══════════════════════════════════
+            MAIN CONTENT
+            ══════════════════════════════════ */}
+        <main className="rng-main">
 
-          {res1.steps?.length > 0 && (
-            <>
-              <div style={{ fontWeight: 900, marginTop: 6 }}>Steps:</div>
-              <div style={{ whiteSpace: "pre-wrap", marginTop: 6 }}>
-                {res1.steps.map((s, i) => (
-                  <div key={i}>{s}</div>
-                ))}
+          {/* ════════ SECTION 1 — Percentage Calculator ════════ */}
+          <section className="card" style={{ marginBottom: 20 }}>
+            <h2 className="card-title">Percentage Calculator</h2>
+            <p className="rng-desc">
+              Fill in any <strong>two</strong> of the three fields and leave one empty.
+              Click <strong>Calculate</strong> to solve for the missing value.
+            </p>
+
+            <div style={boxSt}>
+              <div style={flexRow}>
+                <InField value={p1} onChange={setP1} />
+                <Lbl>% of</Lbl>
+                <InField value={b1} onChange={setB1} />
+                <Lbl>=</Lbl>
+                <InField value={c1} onChange={setC1} />
               </div>
-            </>
-          )}
-        </section>
-      )}
-
-      <section className="card" style={{ marginBottom: 22 }}>
-        <Panel>
-          <div className="row" style={{ gap: 10, alignItems: "center", flexWrap: "wrap" }}>
-            <InlineInput value={p1} onChange={setP1} placeholder="" />
-            <div style={{ fontWeight: 800 }}>%</div>
-            <div style={{ fontWeight: 800 }}>of</div>
-            <InlineInput value={b1} onChange={setB1} placeholder="" />
-            <div style={{ fontWeight: 900 }}>=</div>
-            <InlineInput value={r1} onChange={setR1} placeholder="" />
-          </div>
-
-          <ActionRow onCalc={calcBlock1} onClear={clearBlock1} />
-        </Panel>
-      </section>
-
-      {/* ---------------- Block 2 ---------------- */}
-      <h2 style={{ margin: "8px 0 10px" }}>Percentage Calculator in Common Phrases</h2>
-
-      {/* 2a */}
-      {show2a && res2a && (
-        <section className="card" style={{ marginBottom: 12 }}>
-          <GreenResultBar title={res2a.title} />
-          <div style={{ fontSize: 22, marginBottom: 10 }}>
-            <span style={{ color: "rgb(60, 180, 75)", fontWeight: 900 }}>{res2a.title.replace("Result: ", "")}</span>
-            {" "}is {fmt(toNum(p2a) ?? 0)}% of {fmt(toNum(b2a) ?? 0)}.
-          </div>
-          <div style={{ fontWeight: 900, marginTop: 6 }}>Steps:</div>
-          <div style={{ whiteSpace: "pre-wrap", marginTop: 6 }}>
-            {res2a.steps.map((s, i) => (
-              <div key={i}>{s}</div>
-            ))}
-          </div>
-        </section>
-      )}
-
-      <section className="card" style={{ marginBottom: 12 }}>
-        <Panel>
-          <div className="row" style={{ gap: 10, alignItems: "center", flexWrap: "wrap" }}>
-            <div style={{ fontWeight: 900 }}>what is</div>
-            <InlineInput value={p2a} onChange={setP2a} placeholder="" />
-            <div style={{ fontWeight: 800 }}>%</div>
-            <div style={{ fontWeight: 800 }}>of</div>
-            <InlineInput value={b2a} onChange={setB2a} placeholder="" />
-            <button type="button" className="btn" onClick={calc2a}>
-              Calculate
-            </button>
-          </div>
-          <div className="row" style={{ gap: 10, marginTop: 10 }}>
-            <button type="button" className="btn btn-secondary" onClick={clear2a}>
-              Clear
-            </button>
-          </div>
-        </Panel>
-      </section>
-
-      {/* 2b */}
-      {show2b && res2b && (
-        <section className="card" style={{ marginBottom: 12 }}>
-          <GreenResultBar title={res2b.title} />
-          <div style={{ fontSize: 22, marginBottom: 10 }}>
-            {fmt(toNum(x2b) ?? 0)} is{" "}
-            <span style={{ color: "rgb(60, 180, 75)", fontWeight: 900 }}>
-              {res2b.title.replace("Result: ", "")}
-            </span>{" "}
-            of {fmt(toNum(y2b) ?? 0)}.
-          </div>
-          <div style={{ fontWeight: 900, marginTop: 6 }}>Steps:</div>
-          <div style={{ whiteSpace: "pre-wrap", marginTop: 6 }}>
-            {res2b.steps.map((s, i) => (
-              <div key={i}>{s}</div>
-            ))}
-          </div>
-        </section>
-      )}
-
-      <section className="card" style={{ marginBottom: 12 }}>
-        <Panel>
-          <div className="row" style={{ gap: 10, alignItems: "center", flexWrap: "wrap" }}>
-            <InlineInput value={x2b} onChange={setX2b} placeholder="" />
-            <div style={{ fontWeight: 900 }}>is what % of</div>
-            <InlineInput value={y2b} onChange={setY2b} placeholder="" />
-            <button type="button" className="btn" onClick={calc2b}>
-              Calculate
-            </button>
-          </div>
-          <div className="row" style={{ gap: 10, marginTop: 10 }}>
-            <button type="button" className="btn btn-secondary" onClick={clear2b}>
-              Clear
-            </button>
-          </div>
-        </Panel>
-      </section>
-
-      {/* 2c */}
-      {show2c && res2c && (
-        <section className="card" style={{ marginBottom: 22 }}>
-          <GreenResultBar title={res2c.title} />
-          <div style={{ fontSize: 22, marginBottom: 10 }}>
-            {fmt(toNum(x2c) ?? 0)} is {fmt(toNum(p2c) ?? 0)}% of{" "}
-            <span style={{ color: "rgb(60, 180, 75)", fontWeight: 900 }}>
-              {res2c.title.replace("Result: ", "")}
-            </span>
-            .
-          </div>
-          <div style={{ fontWeight: 900, marginTop: 6 }}>Steps:</div>
-          <div style={{ whiteSpace: "pre-wrap", marginTop: 6 }}>
-            {res2c.steps.map((s, i) => (
-              <div key={i}>{s}</div>
-            ))}
-          </div>
-        </section>
-      )}
-
-      <section className="card" style={{ marginBottom: 28 }}>
-        <Panel>
-          <div className="row" style={{ gap: 10, alignItems: "center", flexWrap: "wrap" }}>
-            <InlineInput value={x2c} onChange={setX2c} placeholder="" />
-            <div style={{ fontWeight: 900 }}>is</div>
-            <InlineInput value={p2c} onChange={setP2c} placeholder="" />
-            <div style={{ fontWeight: 800 }}>%</div>
-            <div style={{ fontWeight: 900 }}>of what</div>
-            <button type="button" className="btn" onClick={calc2c}>
-              Calculate
-            </button>
-          </div>
-          <div className="row" style={{ gap: 10, marginTop: 10 }}>
-            <button type="button" className="btn btn-secondary" onClick={clear2c}>
-              Clear
-            </button>
-          </div>
-        </Panel>
-      </section>
-
-      {/* ---------------- Block 3 ---------------- */}
-      <h2 style={{ margin: "8px 0 10px" }}>Percentage Difference Calculator</h2>
-
-      {show3 && res3 && (
-        <section className="card" style={{ marginBottom: 16 }}>
-          <GreenResultBar title={res3.title} />
-          <div style={{ fontSize: 20, marginBottom: 6 }}>{res3.line}</div>
-
-          <div style={{ fontWeight: 900, marginTop: 6 }}>Steps:</div>
-          <div style={{ whiteSpace: "pre-wrap", marginTop: 6 }}>
-            {res3.steps.map((s, i) => (
-              <div key={i}>{s}</div>
-            ))}
-          </div>
-
-          {res3.extra?.length > 0 && (
-            <div style={{ whiteSpace: "pre-wrap", marginTop: 16 }}>
-              {res3.extra.map((s, i) => (
-                <div key={i} style={{ fontWeight: s === "Steps:" ? 900 : 400 }}>
-                  {s}
-                </div>
-              ))}
+              <BtnRow onCalc={calc1} onClear={clear1} />
+              <ResultBlock res={res1} />
             </div>
-          )}
-        </section>
-      )}
+          </section>
 
-      <section className="card" style={{ marginBottom: 28 }}>
-        <Panel>
-          <div className="row" style={{ gap: 12, alignItems: "center" }}>
-            <div style={{ minWidth: 70 }}>Value 1</div>
-            <InlineInput value={a3} onChange={setA3} placeholder="" style={{ width: 240 }} />
-          </div>
-          <div className="row" style={{ gap: 12, alignItems: "center", marginTop: 10 }}>
-            <div style={{ minWidth: 70 }}>Value 2</div>
-            <InlineInput value={b3} onChange={setB3} placeholder="" style={{ width: 240 }} />
-          </div>
+          {/* ════════ SECTION 2 — Common Phrases ════════ */}
+          <section className="card" style={{ marginBottom: 20 }}>
+            <h2 className="card-title">Percentage Calculator in Common Phrases</h2>
+            <p className="rng-desc">
+              Three quick phrase-based calculators — each has its own Calculate and Clear button.
+            </p>
 
-          <ActionRow onCalc={calc3} onClear={clear3} />
-        </Panel>
-      </section>
+            {/* 2a: What is P% of N? */}
+            <div style={phraseBoxSt}>
+              <p style={{ margin: "0 0 10px", fontSize: 13, fontWeight: 600, color: "#6b7a9e" }}>
+                a) What is _% of _?
+              </p>
+              <div style={flexRow}>
+                <Lbl>What is</Lbl>
+                <InField value={p2a} onChange={setP2a} />
+                <Lbl>% of</Lbl>
+                <InField value={n2a} onChange={setN2a} />
+                <Lbl>?</Lbl>
+              </div>
+              <BtnRow onCalc={calc2a} onClear={clear2a} />
+              <ResultBlock res={res2a} />
+            </div>
 
-      {/* ---------------- Block 4 ---------------- */}
-      <h2 style={{ margin: "8px 0 10px" }}>Percentage Change Calculator</h2>
+            {/* 2b: X is what % of Y? */}
+            <div style={phraseBoxSt}>
+              <p style={{ margin: "0 0 10px", fontSize: 13, fontWeight: 600, color: "#6b7a9e" }}>
+                b) _ is what % of _?
+              </p>
+              <div style={flexRow}>
+                <InField value={x2b} onChange={setX2b} />
+                <Lbl>is what % of</Lbl>
+                <InField value={y2b} onChange={setY2b} />
+                <Lbl>?</Lbl>
+              </div>
+              <BtnRow onCalc={calc2b} onClear={clear2b} />
+              <ResultBlock res={res2b} />
+            </div>
 
-      {show4 && res4 && (
-        <section className="card" style={{ marginBottom: 16 }}>
-          <GreenResultBar title={res4.title} />
-          <div style={{ fontSize: 22, marginBottom: 10 }}>
-            {res4.line.split("=")[0]}= <span style={{ color: "rgb(60, 180, 75)", fontWeight: 900 }}>{res4.title.replace("Result: ", "")}</span>
-          </div>
+            {/* 2c: X is P% of what? */}
+            <div style={{ ...phraseBoxSt, marginBottom: 0 }}>
+              <p style={{ margin: "0 0 10px", fontSize: 13, fontWeight: 600, color: "#6b7a9e" }}>
+                c) _ is _% of what?
+              </p>
+              <div style={flexRow}>
+                <InField value={x2c} onChange={setX2c} />
+                <Lbl>is</Lbl>
+                <InField value={p2c} onChange={setP2c} />
+                <Lbl>% of what?</Lbl>
+              </div>
+              <BtnRow onCalc={calc2c} onClear={clear2c} />
+              <ResultBlock res={res2c} />
+            </div>
+          </section>
 
-          <div style={{ fontWeight: 900, marginTop: 6 }}>Steps:</div>
-          <div style={{ whiteSpace: "pre-wrap", marginTop: 6 }}>
-            {res4.steps.map((s, i) => (
-              <div key={i}>{s}</div>
-            ))}
-          </div>
-        </section>
-      )}
+          {/* ════════ SECTION 3 — Percentage Difference ════════ */}
+          <section className="card" style={{ marginBottom: 20 }}>
+            <h2 className="card-title">Percentage Difference Calculator</h2>
+            <p className="rng-desc">
+              Calculates the percentage difference between two values relative to their average
+              (symmetric — order does not matter).
+            </p>
+            <div style={boxSt}>
+              <div style={{ display: "grid", gap: 10, maxWidth: 380 }}>
+                <div style={flexRow}>
+                  <span style={{ minWidth: 60, fontWeight: 600, color: "#4b5280", fontSize: 14 }}>
+                    Value 1
+                  </span>
+                  <InField value={v1_3} onChange={setV1_3} width={220} />
+                </div>
+                <div style={flexRow}>
+                  <span style={{ minWidth: 60, fontWeight: 600, color: "#4b5280", fontSize: 14 }}>
+                    Value 2
+                  </span>
+                  <InField value={v2_3} onChange={setV2_3} width={220} />
+                </div>
+              </div>
+              <BtnRow onCalc={calc3} onClear={clear3} />
+              <ResultBlock res={res3} />
+            </div>
+          </section>
 
-      <section className="card">
-        <Panel>
-          <div className="row" style={{ gap: 10, alignItems: "center", flexWrap: "wrap" }}>
-            <InlineInput value={v4} onChange={setV4} placeholder="" />
-            <select value={mode4} onChange={(e) => setMode4(e.target.value)} style={{ width: 140 }}>
-              <option value="Increase">Increase</option>
-              <option value="Decrease">Decrease</option>
-            </select>
-            <InlineInput value={p4} onChange={setP4} placeholder="" />
-            <div style={{ fontWeight: 900 }}>%</div>
-            <div style={{ fontWeight: 900 }}>=</div>
-            <InlineInput value={show4 && res4 ? res4.title.replace("Result: ", "") : ""} onChange={() => {}} placeholder="" style={{ background: "#f0eeff", color: "#1e1b4b" }} />
-          </div>
+          {/* ════════ SECTION 4 — Percentage Change ════════ */}
+          <section className="card" style={{ marginBottom: 20 }}>
+            <h2 className="card-title">Percentage Change Calculator</h2>
+            <p className="rng-desc">
+              Fill in any <strong>two</strong> of the three fields (Start, Percentage, End) and
+              leave one empty. The direction (Increase / Decrease) is auto-detected when computing
+              the percentage.
+            </p>
+            <div style={boxSt}>
+              {/* Field labels row */}
+              <div style={{ display: "flex", gap: 8, flexWrap: "wrap", marginBottom: 6, alignItems: "flex-end" }}>
+                <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
+                  <span style={{ fontSize: 11, fontWeight: 700, color: "#6b7a9e", textTransform: "uppercase", letterSpacing: "0.4px" }}>
+                    Start value
+                  </span>
+                  <InField value={v4} onChange={setV4} />
+                </div>
 
-          <ActionRow onCalc={calc4} onClear={clear4} />
-        </Panel>
-      </section>
+                <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
+                  <span style={{ fontSize: 11, fontWeight: 700, color: "#6b7a9e", textTransform: "uppercase", letterSpacing: "0.4px" }}>
+                    Direction
+                  </span>
+                  <select
+                    value={mode4}
+                    onChange={(e) => setMode4(e.target.value)}
+                    style={{
+                      padding: "8px 10px",
+                      borderRadius: 10,
+                      border: "1.5px solid rgba(99,102,241,0.25)",
+                      background: "#f8f9ff",
+                      color: "#1e1b4b",
+                      fontSize: 14,
+                      fontWeight: 600,
+                      cursor: "pointer",
+                      outline: "none",
+                    }}
+                  >
+                    <option value="Increase">Increase</option>
+                    <option value="Decrease">Decrease</option>
+                  </select>
+                </div>
+
+                <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
+                  <span style={{ fontSize: 11, fontWeight: 700, color: "#6b7a9e", textTransform: "uppercase", letterSpacing: "0.4px" }}>
+                    Percentage
+                  </span>
+                  <div style={{ display: "flex", alignItems: "center", gap: 4 }}>
+                    <InField value={p4} onChange={setP4} />
+                    <Lbl>%</Lbl>
+                  </div>
+                </div>
+
+                <Lbl>=</Lbl>
+
+                <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
+                  <span style={{ fontSize: 11, fontWeight: 700, color: "#6b7a9e", textTransform: "uppercase", letterSpacing: "0.4px" }}>
+                    End value
+                  </span>
+                  <InField value={r4} onChange={setR4} />
+                </div>
+              </div>
+
+              <BtnRow onCalc={calc4} onClear={clear4} />
+              <ResultBlock res={res4} />
+            </div>
+          </section>
+
+        </main>
+
+        {/* ══════════════════════════════════
+            SIDEBAR
+            ══════════════════════════════════ */}
+        <Sidebar />
+      </div>
     </div>
   );
 }

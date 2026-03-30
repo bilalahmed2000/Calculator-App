@@ -78,28 +78,93 @@ export default function PasswordGenerator() {
 
       <div className="calc-grid">
         {/* LEFT PANEL */}
-        <section className="card">
+        <section className="card" style={{ display: "flex", flexDirection: "column" }}>
           <h2 className="card-title">Password</h2>
 
-          <input value={password} readOnly />
-
-          <div className="small" style={{ marginTop: 8 }}>
-            <b>Password Strength:</b>{" "}
-            <span style={{ color: strength === "Strong" ? "green" : "orange" }}>
-              {strength}
-            </span>
-            <br />
-            <b>Password Entropy:</b> {entropy} bits
+          {/* Full-width password display */}
+          <div className="field" style={{ marginBottom: 6 }}>
+            <input
+              value={password}
+              readOnly
+              style={{
+                fontFamily: "'Courier New', Courier, monospace",
+                fontSize: 15,
+                letterSpacing: "0.04em",
+                cursor: "text",
+              }}
+            />
           </div>
 
-          <div className="row two" style={{ marginTop: 10 }}>
+          {/* Strength bar */}
+          <div
+            style={{
+              height: 5,
+              borderRadius: 999,
+              background:
+                strength === "Strong"
+                  ? "#6ee7b7"
+                  : strength === "Moderate"
+                  ? "#fcd34d"
+                  : "#fca5a5",
+              marginBottom: 10,
+              transition: "background 0.3s ease",
+            }}
+          />
+
+          {/* Strength + Entropy — side by side */}
+          <div
+            className="small"
+            style={{
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+              flexWrap: "wrap",
+              gap: 6,
+              marginBottom: 24,
+            }}
+          >
+            <span>
+              <b>Strength:</b>{" "}
+              <span
+                style={{
+                  fontWeight: 700,
+                  color:
+                    strength === "Strong"
+                      ? "#059669"
+                      : strength === "Moderate"
+                      ? "#d97706"
+                      : "#dc2626",
+                }}
+              >
+                {strength}
+              </span>
+            </span>
+            <span>
+              <b>Entropy:</b> {entropy} bits
+            </span>
+          </div>
+
+          {/* Buttons — equal width, side-by-side, auto-stack on narrow screens */}
+          <div
+            style={{
+              display: "grid",
+              gridTemplateColumns: "repeat(auto-fit, minmax(130px, 1fr))",
+              gap: 12,
+              marginTop: "auto",
+            }}
+          >
             <button
               className="btn"
+              style={{ width: "100%" }}
               onClick={() => navigator.clipboard.writeText(password)}
             >
               Copy Password
             </button>
-            <button className="btn" onClick={() => setPassword(generatePassword())}>
+            <button
+              className="btn"
+              style={{ width: "100%" }}
+              onClick={() => setPassword(generatePassword())}
+            >
               Regenerate
             </button>
           </div>

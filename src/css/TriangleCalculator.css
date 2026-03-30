@@ -258,6 +258,48 @@
   border-color: rgba(16, 185, 129, 0.3);
 }
 
+/* ---------- Inradius / Circumradius row (2 columns) ---------- */
+.tri-radii-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-top: 4px;
+}
+
+/* ---------- Coordinates block ---------- */
+.tri-coords-block {
+  background: #f8f9ff;
+  border: 1.5px solid rgba(99, 102, 241, 0.15);
+  border-radius: 10px;
+  padding: 14px 16px;
+  margin-top: 4px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.tri-coords-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 8px;
+  font-size: 0.875rem;
+  line-height: 1.5;
+}
+
+.tri-coords-key {
+  font-weight: 700;
+  color: #4f46e5;
+  white-space: nowrap;
+}
+
+.tri-coords-val {
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 0.83rem;
+  color: #1e1b4b;
+  word-break: break-all;
+}
+
 /* ---------- Info list ---------- */
 .tri-info-list {
   list-style: none;
@@ -331,7 +373,8 @@
   }
 
   .tri-kpi-row,
-  .tri-extras-row {
+  .tri-extras-row,
+  .tri-radii-row {
     grid-template-columns: repeat(2, 1fr);
   }
 }
