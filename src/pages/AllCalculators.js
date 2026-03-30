@@ -1,0 +1,328 @@
+import React from 'react';
+import { Link } from 'react-router-dom';
+import '../css/AllCalculators.css';
+
+// Routes that are live in the app
+const LIVE = {
+  mortgage: '/mortgage',
+  autoLoan: '/auto-loan',
+  payment: '/payment',
+  amortization: '/amortization',
+  incomeTax: '/income-tax',
+  interestRate: '/interest',
+  interest: '/interest',
+  loan: '/loan',
+  retirement: '/retirement',
+  investment: '/investment',
+  inflation: '/inflation',
+  bmi: '/bmi',
+  bodyFat: '/body-fat',
+  pregnancy: '/pregnancy',
+  pace: '/pace',
+  calorie: '/calories',
+  bmr: '/bmr',
+  idealWeight: '/ideal-weight',
+  dueDate: '/due-date',
+  scientific: '/scientific',
+  percentage: '/percentage',
+  randomNumber: '/random-number-generator',
+  fraction: '/fraction',
+  triangle: '/triangle-calculator',
+  stdDev: '/std-dev',
+  age: '/age',
+  time: '/time',
+  gpa: '/gpa-calculator',
+  ipSubnet: '/ip-subnet-calculator',
+  password: '/password',
+  conversion: '/conversion',
+  date: '/date',
+  hours: '/hours-calculator',
+  grade: '/grade-calculator',
+  concrete: '/concrete-calculator',
+};
+
+const CS = '/coming-soon'; // placeholder for unbuilt calculators
+
+const categories = [
+  {
+    title: 'Financial Calculators',
+    items: [
+      { label: 'Mortgage Calculator',              to: LIVE.mortgage },
+      { label: 'Auto Loan Calculator',             to: LIVE.autoLoan },
+      { label: 'Payment Calculator',               to: LIVE.payment },
+      { label: 'Amortization Calculator',          to: LIVE.amortization },
+      { label: 'Loan Calculator',                  to: LIVE.loan },
+      { label: 'Interest Calculator',              to: LIVE.interest },
+      { label: 'Income Tax Calculator',            to: LIVE.incomeTax },
+      { label: 'Retirement Calculator',            to: LIVE.retirement },
+      { label: 'Investment Calculator',            to: LIVE.investment },
+      { label: 'Inflation Calculator',             to: LIVE.inflation },
+      { label: 'Currency Calculator',              to: CS },
+      { label: 'Finance Calculator',               to: CS },
+      { label: 'Salary Calculator',                to: CS },
+      { label: 'Interest Rate Calculator',         to: LIVE.interestRate },
+      { label: 'House Affordability Calculator',   to: CS },
+      { label: 'Rent Calculator',                  to: CS },
+      { label: 'Estate Tax Calculator',            to: CS },
+      { label: 'Social Security Calculator',       to: CS },
+      { label: 'Annuity Payout Calculator',        to: CS },
+      { label: 'Credit Cards Payoff Calculator',   to: CS },
+      { label: 'Debt Consolidation Calculator',    to: CS },
+      { label: 'Student Loan Calculator',          to: CS },
+      { label: 'Simple Interest Calculator',       to: LIVE.interest },
+      { label: 'Bond Calculator',                  to: CS },
+      { label: 'Roth IRA Calculator',              to: CS },
+      { label: 'RMD Calculator',                   to: CS },
+      { label: 'Cash Back or Low Interest Calculator', to: CS },
+      { label: 'Depreciation Calculator',          to: CS },
+      { label: 'Margin Calculator',                to: CS },
+      { label: 'Business Loan Calculator',         to: CS },
+      { label: 'Real Estate Calculator',           to: CS },
+      { label: 'Personal Loan Calculator',         to: LIVE.loan },
+      { label: 'Lease Calculator',                 to: CS },
+      { label: 'Budget Calculator',                to: CS },
+      { label: 'IRR Calculator',                   to: CS },
+      { label: 'APR Calculator',                   to: CS },
+      { label: 'VA Mortgage Calculator',           to: CS },
+      { label: 'HELOC Calculator',                 to: CS },
+      { label: 'Rent vs. Buy Calculator',          to: CS },
+      { label: 'Present Value Calculator',         to: CS },
+      { label: 'Future Value Calculator',          to: CS },
+      { label: 'Mortgage Payoff Calculator',       to: CS },
+      { label: 'Compound Interest Calculator',     to: CS },
+      { label: '401K Calculator',                  to: CS },
+      { label: 'Sales Tax Calculator',             to: CS },
+      { label: 'Savings Calculator',               to: CS },
+      { label: 'Marriage Tax Calculator',          to: CS },
+      { label: 'Pension Calculator',               to: CS },
+      { label: 'Annuity Calculator',               to: CS },
+      { label: 'Credit Card Calculator',           to: CS },
+      { label: 'Debt Payoff Calculator',           to: CS },
+      { label: 'Repayment Calculator',             to: CS },
+      { label: 'College Cost Calculator',          to: CS },
+      { label: 'CD Calculator',                    to: CS },
+      { label: 'Mutual Fund Calculator',           to: CS },
+      { label: 'IRA Calculator',                   to: CS },
+      { label: 'VAT Calculator',                   to: CS },
+      { label: 'Auto Lease Calculator',            to: CS },
+      { label: 'Average Return Calculator',        to: CS },
+      { label: 'Discount Calculator',              to: CS },
+      { label: 'Debt-to-Income Ratio Calculator',  to: CS },
+      { label: 'Take-Home-Paycheck Calculator',    to: CS },
+      { label: 'Boat Loan Calculator',             to: CS },
+      { label: 'Refinance Calculator',             to: CS },
+      { label: 'Rental Property Calculator',       to: CS },
+      { label: 'ROI Calculator',                   to: CS },
+      { label: 'FHA Loan Calculator',              to: CS },
+      { label: 'Home Equity Loan Calculator',      to: CS },
+      { label: 'Down Payment Calculator',          to: CS },
+      { label: 'Payback Period Calculator',        to: CS },
+    ],
+  },
+  {
+    title: 'Fitness & Health Calculators',
+    items: [
+      { label: 'BMI Calculator',                   to: LIVE.bmi },
+      { label: 'Body Fat Calculator',              to: LIVE.bodyFat },
+      { label: 'Calorie Calculator',               to: LIVE.calorie },
+      { label: 'BMR Calculator',                   to: LIVE.bmr },
+      { label: 'Ideal Weight Calculator',          to: LIVE.idealWeight },
+      { label: 'Due Date Calculator',              to: LIVE.dueDate },
+      { label: 'Pregnancy Calculator',             to: LIVE.pregnancy },
+      { label: 'Pace Calculator',                  to: LIVE.pace },
+      { label: 'Macro Calculator',                 to: CS },
+      { label: 'Pregnancy Conception Calculator',  to: CS },
+      { label: 'Carbohydrate Calculator',          to: CS },
+      { label: 'Healthy Weight Calculator',        to: LIVE.idealWeight },
+      { label: 'One Rep Max Calculator',           to: CS },
+      { label: 'Protein Calculator',               to: CS },
+      { label: 'TDEE Calculator',                  to: CS },
+      { label: 'Conception Calculator',            to: CS },
+      { label: 'GFR Calculator',                   to: CS },
+      { label: 'Body Surface Area Calculator',     to: CS },
+      { label: 'Anorexic BMI Calculator',          to: CS },
+      { label: 'Overweight Calculator',            to: CS },
+      { label: 'Pregnancy Weight Gain Calculator', to: CS },
+      { label: 'Army Body Fat Calculator',         to: CS },
+      { label: 'Lean Body Mass Calculator',        to: CS },
+      { label: 'Calories Burned Calculator',       to: CS },
+      { label: 'Target Heart Rate Calculator',     to: CS },
+      { label: 'Fat Intake Calculator',            to: CS },
+      { label: 'Ovulation Calculator',             to: CS },
+      { label: 'Period Calculator',                to: CS },
+      { label: 'Body Type Calculator',             to: CS },
+      { label: 'BAC Calculator',                   to: CS },
+      { label: 'Weight Watcher Points Calculator', to: CS },
+    ],
+  },
+  {
+    title: 'Math Calculators',
+    items: [
+      { label: 'Scientific Calculator',            to: LIVE.scientific },
+      { label: 'Percentage Calculator',            to: LIVE.percentage },
+      { label: 'Fraction Calculator',              to: LIVE.fraction },
+      { label: 'Triangle Calculator',              to: LIVE.triangle },
+      { label: 'Standard Deviation Calculator',    to: LIVE.stdDev },
+      { label: 'Random Number Generator',          to: LIVE.randomNumber },
+      { label: 'Volume Calculator',                to: CS },
+      { label: 'Percent Error Calculator',         to: CS },
+      { label: 'Binary Calculator',                to: CS },
+      { label: 'Half-Life Calculator',             to: CS },
+      { label: 'Slope Calculator',                 to: CS },
+      { label: 'Area Calculator',                  to: CS },
+      { label: 'Probability Calculator',           to: CS },
+      { label: 'Mean Median Mode Range Calculator',to: CS },
+      { label: 'Z-score Calculator',               to: CS },
+      { label: 'Ratio Calculator',                 to: CS },
+      { label: 'Circle Calculator',                to: CS },
+      { label: 'Pythagorean Theorem Calculator',   to: CS },
+      { label: 'Root Calculator',                  to: CS },
+      { label: 'Greatest Common Factor Calculator',to: CS },
+      { label: 'Rounding Calculator',              to: CS },
+      { label: 'Scientific Notation Calculator',   to: CS },
+      { label: 'Prime Factorization Calculator',   to: CS },
+      { label: 'Basic Calculator',                 to: CS },
+      { label: 'Average Calculator',               to: CS },
+      { label: 'Number Sequence Calculator',       to: CS },
+      { label: 'Exponent Calculator',              to: CS },
+      { label: 'Hex Calculator',                   to: CS },
+      { label: 'Quadratic Formula Calculator',     to: CS },
+      { label: 'Log Calculator',                   to: CS },
+      { label: 'Sample Size Calculator',           to: CS },
+      { label: 'Statistics Calculator',            to: CS },
+      { label: 'Permutation and Combination Calculator', to: CS },
+      { label: 'Confidence Interval Calculator',   to: CS },
+      { label: 'Distance Calculator',              to: CS },
+      { label: 'Surface Area Calculator',          to: CS },
+      { label: 'Right Triangle Calculator',        to: CS },
+      { label: 'Least Common Multiple Calculator', to: CS },
+      { label: 'Factor Calculator',                to: CS },
+      { label: 'Matrix Calculator',                to: CS },
+      { label: 'Big Number Calculator',            to: CS },
+      { label: 'Common Factor Calculator',         to: CS },
+      { label: 'Long Division Calculator',         to: CS },
+      { label: 'P-value Calculator',               to: CS },
+    ],
+  },
+  {
+    title: 'Other Calculators',
+    items: [
+      { label: 'Age Calculator',                   to: LIVE.age },
+      { label: 'Time Calculator',                  to: LIVE.time },
+      { label: 'GPA Calculator',                   to: LIVE.gpa },
+      { label: 'IP Subnet Calculator',             to: LIVE.ipSubnet },
+      { label: 'Password Generator',               to: LIVE.password },
+      { label: 'Conversion Calculator',            to: LIVE.conversion },
+      { label: 'Date Calculator',                  to: LIVE.date },
+      { label: 'Hours Calculator',                 to: LIVE.hours },
+      { label: 'Grade Calculator',                 to: LIVE.grade },
+      { label: 'Concrete Calculator',              to: LIVE.concrete },
+      { label: 'Height Calculator',                to: CS },
+      { label: 'Voltage Drop Calculator',          to: CS },
+      { label: 'Square Footage Calculator',        to: CS },
+      { label: 'Time Zone Calculator',             to: CS },
+      { label: 'GDP Calculator',                   to: CS },
+      { label: 'Horsepower Calculator',            to: CS },
+      { label: 'Stair Calculator',                 to: CS },
+      { label: 'Ohms Law Calculator',              to: CS },
+      { label: 'Shoe Size Conversion',             to: CS },
+      { label: 'Mileage Calculator',               to: CS },
+      { label: 'Mass Calculator',                  to: CS },
+      { label: 'Speed Calculator',                 to: CS },
+      { label: 'Molecular Weight Calculator',      to: CS },
+      { label: 'Golf Handicap Calculator',         to: CS },
+      { label: 'Tire Size Calculator',             to: CS },
+      { label: 'Tile Calculator',                  to: CS },
+      { label: 'Gravel Calculator',                to: CS },
+      { label: 'Heat Index Calculator',            to: CS },
+      { label: 'Bandwidth Calculator',             to: CS },
+      { label: 'URL Encode / Decode',              to: CS },
+      { label: 'Day Counter',                      to: CS },
+      { label: 'Bra Size Calculator',              to: CS },
+      { label: 'Dice Roller',                      to: CS },
+      { label: 'Fuel Cost Calculator',             to: CS },
+      { label: 'BTU Calculator',                   to: CS },
+      { label: 'Time Card Calculator',             to: CS },
+      { label: 'Love Calculator',                  to: CS },
+      { label: 'Gas Mileage Calculator',           to: CS },
+      { label: 'Engine Horsepower Calculator',     to: CS },
+      { label: 'Resistor Calculator',              to: CS },
+      { label: 'Electricity Calculator',           to: CS },
+      { label: 'Tip Calculator',                   to: CS },
+      { label: 'Density Calculator',               to: CS },
+      { label: 'Weight Calculator',                to: CS },
+      { label: 'Molarity Calculator',              to: CS },
+      { label: 'Roman Numeral Converter',          to: CS },
+      { label: 'Sleep Calculator',                 to: CS },
+      { label: 'Roofing Calculator',               to: CS },
+      { label: 'Mulch Calculator',                 to: CS },
+      { label: 'Wind Chill Calculator',            to: CS },
+      { label: 'Dew Point Calculator',             to: CS },
+      { label: 'Base64 Encode / Decode',           to: CS },
+      { label: 'Time Duration Calculator',         to: CS },
+      { label: 'Day of the Week Calculator',       to: CS },
+    ],
+  },
+  {
+    title: 'Calculators for Your Site',
+    items: [
+      { label: 'Mortgage Calculator for Your Site',   to: CS },
+      { label: 'Scientific Calculator for Your Site', to: CS },
+      { label: 'Concrete Calculator for Your Site',   to: CS },
+      { label: 'Math Calculator for Your Site',       to: CS },
+      { label: 'Love Calculator for Your Site',       to: CS },
+    ],
+  },
+];
+
+const footerLinks = [
+  { label: 'Home Page',      to: '/' },
+  { label: 'About Us',       to: CS },
+  { label: 'Privacy Policy', to: CS },
+  { label: 'Terms of Use',   to: CS },
+];
+
+export default function AllCalculators() {
+  return (
+    <div className="all-calc-container">
+      {/* Breadcrumb */}
+      <nav className="all-calc-breadcrumb" aria-label="breadcrumb">
+        <Link to="/">Home</Link>
+        <span className="sep">/</span>
+        <span>All Calculators</span>
+      </nav>
+
+      <h1 className="all-calc-heading">All Calculators</h1>
+
+      <div className="all-calc-sections">
+        {categories.map((cat) => (
+          <section key={cat.title} className="all-calc-section">
+            <h2 className="all-calc-section-title">{cat.title}</h2>
+            <ul className="all-calc-links">
+              {cat.items.map((item) => (
+                <li key={item.label}>
+                  <Link
+                    to={item.to}
+                    className={item.to === CS ? 'link-soon' : ''}
+                    title={item.to === CS ? 'Coming soon' : undefined}
+                  >
+                    {item.label}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </section>
+        ))}
+      </div>
+
+      {/* Footer links */}
+      <div className="all-calc-footer">
+        {footerLinks.map((fl) => (
+          <Link key={fl.label} to={fl.to}>
+            {fl.label}
+          </Link>
+        ))}
+      </div>
+    </div>
+  );
+}

@@ -72,7 +72,7 @@ export default function Home() {
         <div className="btn-row">
           <a className="btn" href="#catalog">
             Get Started
-          </a>
+          </Link>
         </div>
       </section> */}
 
@@ -95,7 +95,7 @@ export default function Home() {
 
       {/* CTA */}
       <section className="cta-wrap">
-        <a className="cta-btn" href="/all">
+        <Link className="cta-btn" to="/all">
           <span>All Calculators</span>
           <svg
             aria-hidden="true"
@@ -106,7 +106,7 @@ export default function Home() {
           >
             <path d="M5 12h12M13 5l7 7-7 7" fill="none" stroke="currentColor" strokeWidth="2" />
           </svg>
-        </a>
+        </Link>
       </section>
     </div>
   );

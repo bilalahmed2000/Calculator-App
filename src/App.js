@@ -37,6 +37,12 @@ import GPACalculator from './pages/GPACalculator';
 import IPSubnetCalculator from './pages/IPSubnetCalculator';
 import GradeCalculator from './pages/GradeCalculator';
 import ConcreteCalculator from './pages/ConcreteCalculator';
+import AllCalculators from './pages/AllCalculators';
+import ComingSoon from './pages/ComingSoon';
+import FinancialCalculators from './pages/FinancialCalculators';
+import FitnessHealthCalculators from './pages/FitnessHealthCalculators';
+import MathCalculators from './pages/MathCalculators';
+import OtherCalculators from './pages/OtherCalculators';
 
 function App() {
   return (
@@ -81,6 +87,12 @@ function App() {
           <Route path="/ip-subnet-calculator" element={<IPSubnetCalculator />} />
           <Route path="/grade-calculator" element={<GradeCalculator />} />
           <Route path="/concrete-calculator" element={<ConcreteCalculator />} />
+          <Route path="/all" element={<AllCalculators />} />
+          <Route path="/coming-soon" element={<ComingSoon />} />
+          <Route path="/financial" element={<FinancialCalculators />} />
+          <Route path="/fitness" element={<FitnessHealthCalculators />} />
+          <Route path="/math" element={<MathCalculators />} />
+          <Route path="/other" element={<OtherCalculators />} />
       </Routes>
     </Router>
   );
