@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import '../css/Navbar.css';
+import logoImg from '../themeD_sigma_badge.png';
 
 const navData = [
   {
@@ -88,7 +89,9 @@ export default function Navbar() {
     <nav className="navbar">
       {/* Logo */}
       <div className="navbar-logo">
-        <Link to="/">Smart Calculators</Link>
+        <Link to="/">
+          <img src={logoImg} alt="Smart Calculators" className="navbar-logo-img" />
+        </Link>
       </div>
 
       {/* ── Desktop nav ── */}

@@ -34,7 +34,7 @@ body {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 14px 28px;
+  padding: 6px 28px;
   margin: 10px auto;
   max-width: 1200px;
   background: var(--surface);
@@ -46,26 +46,19 @@ body {
 
 /* ====== Brand ====== */
 .navbar-logo a {
-  color: var(--brand);
-  font-size: 20px;
-  font-weight: 800;
-  text-decoration: none;
-  letter-spacing: 0.2px;
   display: inline-flex;
   align-items: center;
-  gap: 10px;
+  text-decoration: none;
   transition: transform var(--speed) ease, opacity var(--speed) ease;
 }
-.navbar-logo a::before {
-  content: "";
-  width: 10px;
-  height: 10px;
-  background: linear-gradient(135deg, var(--brand), var(--brand-2));
-  border-radius: 50%;
-  box-shadow: 0 0 12px rgba(99, 102, 241, 0.5);
-  flex-shrink: 0;
-}
 .navbar-logo a:hover { transform: translateY(-1px); opacity: 0.85; }
+
+.navbar-logo-img {
+  height: 56px;
+  width: auto;
+  display: block;
+  object-fit: contain;
+}
 
 /* ====== Desktop nav list ====== */
 .desktop-nav {
