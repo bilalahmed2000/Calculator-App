@@ -79,6 +79,28 @@ import AverageReturnCalculator from './pages/AverageReturnCalculator';
 import ROICalculator from './pages/ROICalculator';
 import IRRCalculator from './pages/IRRCalculator';
 import APRCalculator from './pages/APRCalculator';
+import FinanceCalculator from './pages/FinanceCalculator';
+import CurrencyCalculator from './pages/CurrencyCalculator';
+import BudgetCalculator from './pages/BudgetCalculator';
+import HouseAffordabilityCalculator from './pages/HouseAffordabilityCalculator';
+import RentCalculator from './pages/RentCalculator';
+import RentVsBuyCalculator from './pages/RentVsBuyCalculator';
+import RentalPropertyCalculator from './pages/RentalPropertyCalculator';
+import RealEstateCalculator from './pages/RealEstateCalculator';
+import PresentValueCalculator from './pages/PresentValueCalculator';
+import FutureValueCalculator from './pages/FutureValueCalculator';
+import DiscountCalculator from './pages/DiscountCalculator';
+import DepreciationCalculator from './pages/DepreciationCalculator';
+import MarginCalculator from './pages/MarginCalculator';
+import CashBackCalculator from './pages/CashBackCalculator';
+import CreditCardPayoffCalculator from './pages/CreditCardPayoffCalculator';
+import CreditCardCalculator from './pages/CreditCardCalculator';
+import DebtConsolidationCalculator from './pages/DebtConsolidationCalculator';
+import DebtPayoffCalculator from './pages/DebtPayoffCalculator';
+import RepaymentCalculator from './pages/RepaymentCalculator';
+import DebtRatioCalculator from './pages/DebtRatioCalculator';
+import CollegeCostCalculator from './pages/CollegeCostCalculator';
+import PaybackPeriodCalculator from './pages/PaybackPeriodCalculator';
 
 function App() {
   return (
@@ -160,6 +182,28 @@ function App() {
           <Route path="/irr" element={<IRRCalculator />} />
           <Route path="/apr" element={<APRCalculator />} />
           <Route path="/all" element={<AllCalculators />} />
+          <Route path="/finance" element={<FinanceCalculator />} />
+          <Route path="/currency" element={<CurrencyCalculator />} />
+          <Route path="/budget" element={<BudgetCalculator />} />
+          <Route path="/house-affordability" element={<HouseAffordabilityCalculator />} />
+          <Route path="/rent" element={<RentCalculator />} />
+          <Route path="/rent-vs-buy" element={<RentVsBuyCalculator />} />
+          <Route path="/rental-property" element={<RentalPropertyCalculator />} />
+          <Route path="/real-estate" element={<RealEstateCalculator />} />
+          <Route path="/present-value" element={<PresentValueCalculator />} />
+          <Route path="/future-value" element={<FutureValueCalculator />} />
+          <Route path="/discount" element={<DiscountCalculator />} />
+          <Route path="/depreciation" element={<DepreciationCalculator />} />
+          <Route path="/margin" element={<MarginCalculator />} />
+          <Route path="/cash-back" element={<CashBackCalculator />} />
+          <Route path="/credit-card-payoff" element={<CreditCardPayoffCalculator />} />
+          <Route path="/credit-card" element={<CreditCardCalculator />} />
+          <Route path="/debt-consolidation" element={<DebtConsolidationCalculator />} />
+          <Route path="/debt-payoff" element={<DebtPayoffCalculator />} />
+          <Route path="/repayment" element={<RepaymentCalculator />} />
+          <Route path="/debt-ratio" element={<DebtRatioCalculator />} />
+          <Route path="/college-cost" element={<CollegeCostCalculator />} />
+          <Route path="/payback-period" element={<PaybackPeriodCalculator />} />
           <Route path="/coming-soon" element={<ComingSoon />} />
           <Route path="/financial" element={<FinancialCalculators />} />
           <Route path="/fitness" element={<FitnessHealthCalculators />} />
