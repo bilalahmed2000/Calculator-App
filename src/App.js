@@ -139,6 +139,44 @@ import PythagoreanTheoremCalculator from './pages/PythagoreanTheoremCalculator';
 import SlopeCalculator from './pages/SlopeCalculator';
 import DistanceCalculator from './pages/DistanceCalculator';
 import RatioCalculator from './pages/RatioCalculator';
+import QuadraticFormulaCalculator from './pages/QuadraticFormulaCalculator';
+import GCFCalculator from './pages/GCFCalculator';
+import LCMCalculator from './pages/LCMCalculator';
+import FactorCalculator from './pages/FactorCalculator';
+import HalfLifeCalculator from './pages/HalfLifeCalculator';
+import MatrixCalculator from './pages/MatrixCalculator';
+import ProbabilityCalculator from './pages/ProbabilityCalculator';
+import MeanMedianModeCalculator from './pages/MeanMedianModeCalculator';
+import ZScoreCalculator from './pages/ZScoreCalculator';
+import StatisticsCalculator from './pages/StatisticsCalculator';
+import PermutationCombinationCalculator from './pages/PermutationCombinationCalculator';
+import ConfidenceIntervalCalculator from './pages/ConfidenceIntervalCalculator';
+import SampleSizeCalculator from './pages/SampleSizeCalculator';
+import PercentErrorCalculator from './pages/PercentErrorCalculator';
+import DayCounterCalculator from './pages/DayCounterCalculator';
+import TimeZoneCalculator from './pages/TimeZoneCalculator';
+import TimeCardCalculator from './pages/TimeCardCalculator';
+import TimeDurationCalculator from './pages/TimeDurationCalculator';
+import DayOfWeekCalculator from './pages/DayOfWeekCalculator';
+import UrlEncodeDecodeCalculator from './pages/UrlEncodeDecodeCalculator';
+import Base64Calculator from './pages/Base64Calculator';
+import BandwidthCalculator from './pages/BandwidthCalculator';
+import RomanNumeralConverter from './pages/RomanNumeralConverter';
+import ShoeSizeConverter from './pages/ShoeSizeConverter';
+import HeightCalculator from './pages/HeightCalculator';
+import VoltageDropCalculator from './pages/VoltageDropCalculator';
+import OhmsLawCalculator from './pages/OhmsLawCalculator';
+import ResistorCalculator from './pages/ResistorCalculator';
+import HorsepowerCalculator from './pages/HorsepowerCalculator';
+import EngineHorsepowerCalculator from './pages/EngineHorsepowerCalculator';
+import MolecularWeightCalculator from './pages/MolecularWeightCalculator';
+import MolarityCalculator from './pages/MolarityCalculator';
+import DensityCalculator from './pages/DensityCalculator';
+import SpeedCalculator from './pages/SpeedCalculator';
+import MassCalculator from './pages/MassCalculator';
+import WeightCalculator from './pages/WeightCalculator';
+import GDPCalculator from './pages/GDPCalculator';
+import ElectricityCalculator from './pages/ElectricityCalculator';
 
 function App() {
   return (
@@ -280,6 +318,44 @@ function App() {
           <Route path="/slope" element={<SlopeCalculator />} />
           <Route path="/distance" element={<DistanceCalculator />} />
           <Route path="/ratio" element={<RatioCalculator />} />
+          <Route path="/quadratic" element={<QuadraticFormulaCalculator />} />
+          <Route path="/gcf" element={<GCFCalculator />} />
+          <Route path="/lcm" element={<LCMCalculator />} />
+          <Route path="/factor" element={<FactorCalculator />} />
+          <Route path="/half-life" element={<HalfLifeCalculator />} />
+          <Route path="/matrix" element={<MatrixCalculator />} />
+          <Route path="/probability" element={<ProbabilityCalculator />} />
+          <Route path="/mean-median-mode" element={<MeanMedianModeCalculator />} />
+          <Route path="/z-score" element={<ZScoreCalculator />} />
+          <Route path="/statistics" element={<StatisticsCalculator />} />
+          <Route path="/permutation-combination" element={<PermutationCombinationCalculator />} />
+          <Route path="/confidence-interval" element={<ConfidenceIntervalCalculator />} />
+          <Route path="/sample-size" element={<SampleSizeCalculator />} />
+          <Route path="/percent-error" element={<PercentErrorCalculator />} />
+          <Route path="/day-counter" element={<DayCounterCalculator />} />
+          <Route path="/time-zone-calculator" element={<TimeZoneCalculator />} />
+          <Route path="/time-card-calculator" element={<TimeCardCalculator />} />
+          <Route path="/time-duration-calculator" element={<TimeDurationCalculator />} />
+          <Route path="/day-of-the-week-calculator" element={<DayOfWeekCalculator />} />
+          <Route path="/url-encode-decode" element={<UrlEncodeDecodeCalculator />} />
+          <Route path="/base64-encode-decode" element={<Base64Calculator />} />
+          <Route path="/bandwidth-calculator" element={<BandwidthCalculator />} />
+          <Route path="/roman-numeral-converter" element={<RomanNumeralConverter />} />
+          <Route path="/shoe-size-conversion" element={<ShoeSizeConverter />} />
+          <Route path="/height-calculator" element={<HeightCalculator />} />
+          <Route path="/voltage-drop-calculator" element={<VoltageDropCalculator />} />
+          <Route path="/ohms-law-calculator" element={<OhmsLawCalculator />} />
+          <Route path="/resistor-calculator" element={<ResistorCalculator />} />
+          <Route path="/horsepower-calculator" element={<HorsepowerCalculator />} />
+          <Route path="/engine-horsepower-calculator" element={<EngineHorsepowerCalculator />} />
+          <Route path="/molecular-weight-calculator" element={<MolecularWeightCalculator />} />
+          <Route path="/molarity-calculator" element={<MolarityCalculator />} />
+          <Route path="/density-calculator" element={<DensityCalculator />} />
+          <Route path="/speed-calculator" element={<SpeedCalculator />} />
+          <Route path="/mass-calculator" element={<MassCalculator />} />
+          <Route path="/weight-calculator" element={<WeightCalculator />} />
+          <Route path="/gdp-calculator" element={<GDPCalculator />} />
+          <Route path="/electricity-calculator" element={<ElectricityCalculator />} />
           <Route path="/coming-soon" element={<ComingSoon />} />
           <Route path="/financial" element={<FinancialCalculators />} />
           <Route path="/fitness" element={<FitnessHealthCalculators />} />
