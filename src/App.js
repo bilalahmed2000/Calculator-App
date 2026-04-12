@@ -101,6 +101,44 @@ import RepaymentCalculator from './pages/RepaymentCalculator';
 import DebtRatioCalculator from './pages/DebtRatioCalculator';
 import CollegeCostCalculator from './pages/CollegeCostCalculator';
 import PaybackPeriodCalculator from './pages/PaybackPeriodCalculator';
+import MacroCalculator from './pages/MacroCalculator';
+import TDEECalculator from './pages/TDEECalculator';
+import LeanBodyMassCalculator from './pages/LeanBodyMassCalculator';
+import BodySurfaceAreaCalculator from './pages/BodySurfaceAreaCalculator';
+import HealthyWeightCalculator from './pages/HealthyWeightCalculator';
+import BodyTypeCalculator from './pages/BodyTypeCalculator';
+import ArmyBodyFatCalculator from './pages/ArmyBodyFatCalculator';
+import PregnancyConceptionCalculator from './pages/PregnancyConceptionCalculator';
+import PregnancyWeightGainCalculator from './pages/PregnancyWeightGainCalculator';
+import OvulationCalculator from './pages/OvulationCalculator';
+import PeriodCalculator from './pages/PeriodCalculator';
+import ConceptionCalculator from './pages/ConceptionCalculator';
+import OneRepMaxCalculator from './pages/OneRepMaxCalculator';
+import ProteinCalculator from './pages/ProteinCalculator';
+import CarbohydrateCalculator from './pages/CarbohydrateCalculator';
+import CaloriesBurnedCalculator from './pages/CaloriesBurnedCalculator';
+import TargetHeartRateCalculator from './pages/TargetHeartRateCalculator';
+import FatIntakeCalculator from './pages/FatIntakeCalculator';
+import GFRCalculator from './pages/GFRCalculator';
+import BACCalculator from './pages/BACCalculator';
+import RoundingCalculator from './pages/RoundingCalculator';
+import RootCalculator from './pages/RootCalculator';
+import ExponentCalculator from './pages/ExponentCalculator';
+import LogCalculator from './pages/LogCalculator';
+import HexCalculator from './pages/HexCalculator';
+import BinaryCalculator from './pages/BinaryCalculator';
+import BigNumberCalculator from './pages/BigNumberCalculator';
+import ScientificNotationCalculator from './pages/ScientificNotationCalculator';
+import NumberSequenceCalculator from './pages/NumberSequenceCalculator';
+import VolumeCalculator from './pages/VolumeCalculator';
+import AreaCalculator from './pages/AreaCalculator';
+import CircleCalculator from './pages/CircleCalculator';
+import SurfaceAreaCalculator from './pages/SurfaceAreaCalculator';
+import RightTriangleCalculator from './pages/RightTriangleCalculator';
+import PythagoreanTheoremCalculator from './pages/PythagoreanTheoremCalculator';
+import SlopeCalculator from './pages/SlopeCalculator';
+import DistanceCalculator from './pages/DistanceCalculator';
+import RatioCalculator from './pages/RatioCalculator';
 
 function App() {
   return (
@@ -204,6 +242,44 @@ function App() {
           <Route path="/debt-ratio" element={<DebtRatioCalculator />} />
           <Route path="/college-cost" element={<CollegeCostCalculator />} />
           <Route path="/payback-period" element={<PaybackPeriodCalculator />} />
+          <Route path="/macro" element={<MacroCalculator />} />
+          <Route path="/tdee" element={<TDEECalculator />} />
+          <Route path="/lean-body-mass" element={<LeanBodyMassCalculator />} />
+          <Route path="/body-surface-area" element={<BodySurfaceAreaCalculator />} />
+          <Route path="/healthy-weight" element={<HealthyWeightCalculator />} />
+          <Route path="/body-type" element={<BodyTypeCalculator />} />
+          <Route path="/army-body-fat" element={<ArmyBodyFatCalculator />} />
+          <Route path="/pregnancy-conception" element={<PregnancyConceptionCalculator />} />
+          <Route path="/pregnancy-weight-gain" element={<PregnancyWeightGainCalculator />} />
+          <Route path="/ovulation" element={<OvulationCalculator />} />
+          <Route path="/period" element={<PeriodCalculator />} />
+          <Route path="/conception" element={<ConceptionCalculator />} />
+          <Route path="/one-rep-max" element={<OneRepMaxCalculator />} />
+          <Route path="/protein" element={<ProteinCalculator />} />
+          <Route path="/carbohydrate" element={<CarbohydrateCalculator />} />
+          <Route path="/calories-burned" element={<CaloriesBurnedCalculator />} />
+          <Route path="/target-heart-rate" element={<TargetHeartRateCalculator />} />
+          <Route path="/fat-intake" element={<FatIntakeCalculator />} />
+          <Route path="/gfr" element={<GFRCalculator />} />
+          <Route path="/bac" element={<BACCalculator />} />
+          <Route path="/rounding" element={<RoundingCalculator />} />
+          <Route path="/root" element={<RootCalculator />} />
+          <Route path="/exponent" element={<ExponentCalculator />} />
+          <Route path="/log" element={<LogCalculator />} />
+          <Route path="/hex" element={<HexCalculator />} />
+          <Route path="/binary" element={<BinaryCalculator />} />
+          <Route path="/big-number" element={<BigNumberCalculator />} />
+          <Route path="/scientific-notation" element={<ScientificNotationCalculator />} />
+          <Route path="/number-sequence" element={<NumberSequenceCalculator />} />
+          <Route path="/volume" element={<VolumeCalculator />} />
+          <Route path="/area" element={<AreaCalculator />} />
+          <Route path="/circle" element={<CircleCalculator />} />
+          <Route path="/surface-area" element={<SurfaceAreaCalculator />} />
+          <Route path="/right-triangle" element={<RightTriangleCalculator />} />
+          <Route path="/pythagorean-theorem" element={<PythagoreanTheoremCalculator />} />
+          <Route path="/slope" element={<SlopeCalculator />} />
+          <Route path="/distance" element={<DistanceCalculator />} />
+          <Route path="/ratio" element={<RatioCalculator />} />
           <Route path="/coming-soon" element={<ComingSoon />} />
           <Route path="/financial" element={<FinancialCalculators />} />
           <Route path="/fitness" element={<FitnessHealthCalculators />} />

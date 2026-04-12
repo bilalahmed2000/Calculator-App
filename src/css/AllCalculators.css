@@ -88,7 +88,7 @@
   display: block;
   padding: 5px 6px;
   font-size: 13px;
-  font-weight: 700;
+  font-weight: 800;
   color: #1e1b4b;
   text-decoration: none;
   border-radius: 6px;
@@ -103,9 +103,10 @@
   transform: translateX(2px);
 }
 
-/* Coming-soon links — slightly muted */
+/* Coming-soon links — muted and lighter weight */
 .all-calc-links li a.link-soon {
   color: #9ca3c8;
+  font-weight: 400;
 }
 .all-calc-links li a.link-soon:hover {
   color: #6366f1;

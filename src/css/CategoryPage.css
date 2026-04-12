@@ -116,6 +116,7 @@
 /* ---- Muted (coming soon) card — same grid, lighter text ---- */
 .cat-card.cat-muted {
   color: #b0b8d4;
+  font-weight: 400;
   background: #fafbff;
   box-shadow: none;
   border-color: rgba(176, 184, 212, 0.2);
