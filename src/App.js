@@ -177,6 +177,31 @@ import MassCalculator from './pages/MassCalculator';
 import WeightCalculator from './pages/WeightCalculator';
 import GDPCalculator from './pages/GDPCalculator';
 import ElectricityCalculator from './pages/ElectricityCalculator';
+import StairCalculator from './pages/StairCalculator';
+import RoofingCalculator from './pages/RoofingCalculator';
+import TileCalculator from './pages/TileCalculator';
+import GravelCalculator from './pages/GravelCalculator';
+import SquareFootageCalculator from './pages/SquareFootageCalculator';
+import MulchCalculator from './pages/MulchCalculator';
+import BTUCalculator from './pages/BTUCalculator';
+import FuelCostCalculator from './pages/FuelCostCalculator';
+import GasMileageCalculator from './pages/GasMileageCalculator';
+import MileageCalculator from './pages/MileageCalculator';
+import TireSizeCalculator from './pages/TireSizeCalculator';
+import TipCalculator from './pages/TipCalculator';
+import SleepCalculator from './pages/SleepCalculator';
+import HeatIndexCalculator from './pages/HeatIndexCalculator';
+import WindChillCalculator from './pages/WindChillCalculator';
+import DewPointCalculator from './pages/DewPointCalculator';
+import GolfHandicapCalculator from './pages/GolfHandicapCalculator';
+import LoveCalculator from './pages/LoveCalculator';
+import DiceRoller from './pages/DiceRoller';
+import BraSizeCalculator from './pages/BraSizeCalculator';
+import MortgageCalculatorForYourSite from './pages/MortgageCalculatorForYourSite';
+import ScientificCalculatorForYourSite from './pages/ScientificCalculatorForYourSite';
+import ConcreteCalculatorForYourSite from './pages/ConcreteCalculatorForYourSite';
+import MathCalculatorForYourSite from './pages/MathCalculatorForYourSite';
+import LoveCalculatorForYourSite from './pages/LoveCalculatorForYourSite';
 
 function App() {
   return (
@@ -356,6 +381,31 @@ function App() {
           <Route path="/weight-calculator" element={<WeightCalculator />} />
           <Route path="/gdp-calculator" element={<GDPCalculator />} />
           <Route path="/electricity-calculator" element={<ElectricityCalculator />} />
+          <Route path="/stair-calculator" element={<StairCalculator />} />
+          <Route path="/roofing-calculator" element={<RoofingCalculator />} />
+          <Route path="/tile-calculator" element={<TileCalculator />} />
+          <Route path="/gravel-calculator" element={<GravelCalculator />} />
+          <Route path="/square-footage-calculator" element={<SquareFootageCalculator />} />
+          <Route path="/mulch-calculator" element={<MulchCalculator />} />
+          <Route path="/btu-calculator" element={<BTUCalculator />} />
+          <Route path="/fuel-cost-calculator" element={<FuelCostCalculator />} />
+          <Route path="/gas-mileage-calculator" element={<GasMileageCalculator />} />
+          <Route path="/mileage-calculator" element={<MileageCalculator />} />
+          <Route path="/tire-size-calculator" element={<TireSizeCalculator />} />
+          <Route path="/tip-calculator" element={<TipCalculator />} />
+          <Route path="/sleep-calculator" element={<SleepCalculator />} />
+          <Route path="/heat-index-calculator" element={<HeatIndexCalculator />} />
+          <Route path="/wind-chill-calculator" element={<WindChillCalculator />} />
+          <Route path="/dew-point-calculator" element={<DewPointCalculator />} />
+          <Route path="/golf-handicap-calculator" element={<GolfHandicapCalculator />} />
+          <Route path="/love-calculator" element={<LoveCalculator />} />
+          <Route path="/dice-roller" element={<DiceRoller />} />
+          <Route path="/bra-size-calculator" element={<BraSizeCalculator />} />
+          <Route path="/mortgage-calculator-for-your-site" element={<MortgageCalculatorForYourSite />} />
+          <Route path="/scientific-calculator-for-your-site" element={<ScientificCalculatorForYourSite />} />
+          <Route path="/concrete-calculator-for-your-site" element={<ConcreteCalculatorForYourSite />} />
+          <Route path="/math-calculator-for-your-site" element={<MathCalculatorForYourSite />} />
+          <Route path="/love-calculator-for-your-site" element={<LoveCalculatorForYourSite />} />
           <Route path="/coming-soon" element={<ComingSoon />} />
           <Route path="/financial" element={<FinancialCalculators />} />
           <Route path="/fitness" element={<FitnessHealthCalculators />} />
